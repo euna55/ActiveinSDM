@@ -2,6 +2,9 @@
 *.jpeg
 *.png
 !assets/*.png
+!images/*.jpg
+!images/*.jpeg
+!images/*.png
 *.zip
 Active in Seodaemun.dc.html
 Mobile app design workflow/
