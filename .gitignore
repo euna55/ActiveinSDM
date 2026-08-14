@@ -1,0 +1,8 @@
+*.jpg
+*.jpeg
+*.png
+!assets/*.png
+*.zip
+Active in Seodaemun.dc.html
+Mobile app design workflow/
+node_modules/

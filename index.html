@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet data-dc-atomics="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&amp;family=Gaegu:wght@400;700&amp;display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  body{margin:0;background:#2b271f;font-family:'Nanum Myeongjo',serif;}
+  a{color:#a12b24}
+  a:hover{color:#7d1f1a}
+  ::selection{background:#a12b24;color:#f3ead3}
+  *{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 16px;background:radial-gradient(circle at 50% 0%, #3a352c 0%, #221f19 70%)">
+  <div style="width:390px;height:844px;background:#e9ddc3;border-radius:36px;box-shadow:0 30px 70px rgba(0,0,0,.55), 0 0 0 8px #17140f;position:relative;overflow:hidden;display:flex;flex-direction:column">
+
+    <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);width:120px;height:22px;background:#17140f;border-radius:0 0 14px 14px;z-index:50"></div>
+
+    <div style="padding:38px 20px 10px;background:#e9ddc3;flex:none;position:relative">
+      <div style="border:2px solid #241f18;border-radius:2px;padding:6px 10px;display:flex;align-items:center;justify-content:center;gap:10px">
+        <div style="writing-mode:vertical-rl;font-size:8px;color:#5c4a2e;letter-spacing:.2em">大韓帝國</div>
+        <div style="display:flex;align-items:center;gap:6px;flex:1;justify-content:center">
+          <span style="font-size:17px;font-weight:800;color:#241f18;letter-spacing:.08em">독립</span>
+          <image-slot id="masthead-emblem" shape="rect" style="width:24px;height:17px" placeholder="기"></image-slot>
+          <span style="font-size:17px;font-weight:800;color:#241f18;letter-spacing:.08em">신문</span>
+        </div>
+        <div style="writing-mode:vertical-rl;font-size:8px;color:#5c4a2e;letter-spacing:.2em">光復特報</div>
+      </div>
+
+      <sc-if value="{{ showTopBar }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(36,31,24,.15)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <button onClick="{{ goBack }}" style="border:none;background:none;font-size:22px;color:#241f18;padding:4px 8px;cursor:pointer;font-family:inherit">‹</button>
+            <div style="font-size:13.5px;letter-spacing:.05em;color:#5c4a2e">{{ stepLabel }}</div>
+            <sc-if value="{{ showTimer }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ togglePieces }}" style="border:1px solid #5c4a2e;background:#f3ead3;color:#5c4a2e;font-size:12px;padding:4px 8px;border-radius:4px;cursor:pointer;font-family:inherit;white-space:nowrap">획득 조각</button>
+            </sc-if>
+          </div>
+          <sc-if value="{{ showTimer }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;border:1px solid #a12b24;border-radius:4px;padding:6px 0;margin-bottom:6px;background:#f3ead3">
+              <span style="font-size:18px;font-weight:800;color:#a12b24;letter-spacing:.05em;font-family:ui-monospace,monospace">⏱ {{ timeDisplay }}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="font-size:11px;color:#5c4a2e;white-space:nowrap;font-family:'Gaegu',cursive">순사 게이지</div>
+              <div style="flex:1;height:6px;background:#ded0b0;border-radius:4px;overflow:hidden">
+                <div style="height:100%;background:#a12b24;border-radius:4px;width:{{ gaugePct }}%;transition:width 1s linear"></div>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{ showPiecesModal }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(36,31,24,.55);z-index:100;display:flex;align-items:center;justify-content:center;padding:30px" onClick="{{ togglePieces }}">
+        <div style="background:#e9ddc3;border-radius:8px;padding:22px 18px;max-height:80%;overflow-y:auto;width:100%" onClick="{{ stopPropagation }}">
+          <div style="font-size:16px;font-weight:700;color:#241f18;margin-bottom:14px;text-align:center">지금까지 모은 조각</div>
+          <sc-if value="{{ hasNoPieces }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:14px;color:#5c4a2e;text-align:center;padding:20px 0">아직 모은 조각이 없다.</div>
+          </sc-if>
+          <sc-for list="{{ collectedPieces }}" as="p" hint-placeholder-count="0">
+            <div style="display:flex;align-items:center;gap:12px;background:#f3ead3;border-radius:6px;padding:10px 14px;margin-bottom:8px">
+              <div style="font-size:20px;color:#a12b24;flex:none">{{ p.symbol }}</div>
+              <div style="font-family:'Gaegu',cursive;font-size:15px;color:#241f18">{{ p.text }}</div>
+            </div>
+          </sc-for>
+          <button onClick="{{ togglePieces }}" style="width:100%;margin-top:10px;background:#241f18;color:#f3ead3;border:none;padding:12px;border-radius:4px;font-size:14px;font-family:inherit;cursor:pointer">닫기</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <div ref="{{ scrollRef }}" style="flex:1;overflow-y:auto;position:relative">
+
+      <sc-if value="{{ isCover }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:20px 26px 40px;text-align:center;min-height:100%;display:flex;flex-direction:column;background:repeating-linear-gradient(0deg,rgba(36,31,24,.02) 0px,rgba(36,31,24,.02) 1px,transparent 1px,transparent 26px)">
+          <div style="border-top:3px double #241f18;border-bottom:3px double #241f18;padding:18px 0">
+            <h1 style="margin:0;font-size:40px;color:#241f18;font-weight:800;letter-spacing:.02em">액티브 인<br>서대문</h1>
+          </div>
+          <div style="margin-top: 14px; font-size: 20px; color: #a12b24; font-weight: 700">사라진 독립투사를 찾아라</div>
+
+          <div style="margin-top:28px;background:#f3ead3;padding:20px 18px;border-radius:2px;text-align:left;box-shadow:0 4px 14px rgba(36,31,24,.15)">
+            <p style="margin: 0 0 12px; font-size: 20px; line-height: 1.75; color: #241f18; text-align: center">서대문독립공원을 지나던 당신에게 <br>의문의 메시지가 도착했다.</p>
+            <p style="margin: 0; font-size: 20px; line-height: 1.75; color: #241f18; text-align: center">"독립군의 비밀 자금을 아는 <br>단 한 사람이 사라졌습니다. <br>공원 곳곳에 흩어진 조각을 <br>모아 60분 안에 <br>그를 찾아주십시오!"</p>
+          </div>
+
+          <div style="margin-top:20px;display:flex;justify-content:center;gap:18px;font-size:12.5px;color:#5c4a2e">
+            
+          </div>
+          <div style="display:flex;justify-content:center;gap:18px;font-size:12.5px;color:#5c4a2e;margin-top:4px">
+            
+          </div>
+
+          <div style="flex:1"></div>
+          <button onClick="{{ startGame }}" style="margin-top:24px;background:#a12b24;color:#f3ead3;border:none;padding:16px;border-radius:4px;font-size:18px;font-weight:700;font-family:inherit;letter-spacing:.05em;cursor:pointer;box-shadow:0 6px 16px rgba(161,43,36,.4)">시작하기</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSelect }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px;min-height:100%;display:flex;flex-direction:column;justify-content:center">
+          <h2 style="margin:0 0 14px;font-size:22px;color:#241f18;text-align:center">조력자를 선택하시오</h2>
+          <p style="margin:0 0 20px;font-size:14px;line-height:1.7;color:#5c4a2e;text-align:center">당신은 조력자 키링 하나를 건네받았다. <br>네 명의 독립운동가 중 한 명이<br>여정 내내 곁에서 길을 일러줄 것이다.<br>당신의 조력자는 누구인가?</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <sc-for list="{{ charList }}" as="c" hint-placeholder-count="4">
+              <button onClick="{{ c.select }}" style="border:3px solid {{ c.borderColor }};background:#f3ead3;border-radius:8px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-family:inherit;text-align:center">
+                <img src="{{ c.img }}" alt="{{ c.name }}" loading="lazy" style="width:74px;height:74px;object-fit:cover;border-radius:50%;background:#fff;border:1px solid rgba(36,31,24,.15)">
+                <div style="font-size: 20px; font-weight: 700; color: #241f18">{{ c.name }}</div>
+                <div style="font-size: 14px; color: #a12b24">{{ c.trait }}</div>
+                <div style="font-size: 15px; color: #5c4a2e; font-family: 'Gaegu',cursive">{{ c.tone }}</div>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- SPOT 1: 독립문 -->
+      <sc-if value="{{ isS1Intro }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px">
+          <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 1</div>
+          <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">독립문</h2>
+          <image-slot id="photo-1" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="독립문 사진"></image-slot>
+          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
+            <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+            <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18;white-space:pre-line">{{ s1IntroLine1 }}</div>
+          </div>
+          <button onClick="{{ goS1Mission }}" style="position:sticky;bottom:0;width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px">도착했다</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isS1Mission }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px">
+          <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 1 · 독립문</div>
+          <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">쪽지 확인</h2>
+          <div style="background:#f3ead3;padding:22px 20px;margin:0 auto 22px;transform:rotate(-1.3deg);clip-path:polygon(2% 2%,97% 0%,100% 30%,98% 55%,100% 80%,95% 100%,58% 97%,28% 100%,4% 95%,0% 62%,3% 32%,0% 6%);box-shadow:0 6px 16px rgba(36,31,24,.2)">
+            <p style="margin: 0; font-family: 'Gaegu',cursive; font-size: 20px; line-height: 1.85; color: #241f18; text-align: center">「과거를 잊은 민족에게 미래는 없다.<br>과거를 더해야 오늘이 보이리라.」</p>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
+            <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+            <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">저 문 위를 보게. 태극기가 새겨져 있구먼. 그런데… 어딘가 지금 우리가 아는 것과 다른 것 같지 않은가?</div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;flex-direction:row-reverse;margin-bottom:14px">
+            <div style="background:#ded0b0;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">어? 무엇이 다르지?</div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:16px">
+            <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+            <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">나도 확실치는 않네만, 눈을 크게 뜨고 잘 살펴보게. 가운데도, 네 귀퉁이도 말일세.</div>
+          </div>
+
+          <image-slot id="photo-2" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="독립문 태극기 사진"></image-slot>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr 1fr;width:230px;height:230px;margin:0 auto 22px;background:#ded0b0;border-radius:8px;padding:14px">
+            <div style="display:flex;align-items:center;justify-content:center;font-size:28px;color:#241f18;font-weight:700">7</div>
+            <div></div>
+            <div style="display:flex;align-items:center;justify-content:center;font-size:28px;color:#241f18;font-weight:700">11</div>
+            <div></div>
+            <div style="display:flex;align-items:center;justify-content:center"><image-slot id="masthead-emblem" shape="circle" style="width:72px;height:72px"></image-slot></div>
+            <div></div>
+            <div style="display:flex;align-items:center;justify-content:center;font-size:28px;color:#241f18;font-weight:700">7</div>
+            <div></div>
+            <div style="display:flex;align-items:center;justify-content:center;font-size:28px;color:#a12b24;font-weight:800">?</div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <input value="{{ spot1Input }}" onChange="{{ setSpot1Input }}" placeholder="숫자를 입력하시오" style="flex:1;padding:12px 14px;border:2px solid #241f18;border-radius:4px;font-size:16px;font-family:inherit;background:#fff">
+            <button onClick="{{ checkSpot1 }}" style="background:#241f18;color:#f3ead3;border:none;padding:12px 18px;border-radius:4px;font-size:15px;font-family:inherit;cursor:pointer">확인</button>
+          </div>
+          <sc-if value="{{ spot1Feedback }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:14px;color:{{ spot1FeedbackColor }};margin-bottom:14px;font-weight:700">{{ spot1Feedback }}</div>
+          </sc-if>
+
+          <button onClick="{{ showHint1 }}" disabled="{{ spot1HintDisabled }}" style="width:100%;background:none;border:1px solid #5c4a2e;color:#5c4a2e;padding:10px;border-radius:4px;font-size:14px;font-family:inherit;cursor:pointer;margin-bottom:10px">{{ spot1HintLabel }}</button>
+          <sc-for list="{{ spot1HintsVisible }}" as="h" hint-placeholder-count="0">
+            <div style="font-size: 18px; color: #5c4a2e; background: #ded0b0; padding: 10px 12px; border-radius: 6px; margin-bottom: 8px; line-height: 1.6; font-family: 'Gaegu',cursive">{{ h }}</div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isS1Complete }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px;text-align:center">
+          <div style="width:90px;height:90px;margin:0 auto 10px;border:3px double #a12b24;border-radius:50%;display:flex;align-items:center;justify-content:center;transform:rotate(-8deg)">
+            <div style="font-size:22px;font-weight:800;color:#a12b24;letter-spacing:.1em">정답</div>
+          </div>
+          <p style="margin:0 0 20px;font-family:'Gaegu',cursive;font-size:16px;color:#a12b24">"과거와 오늘을 견주어 볼 줄 아는 눈이 있구려!"</p>
+          <div style="font-size:12.5px;letter-spacing:.15em;color:#5c4a2e;margin-bottom:10px">조각을 획득하였다</div>
+          <div style="width:170px;height:170px;margin:0 auto 20px;background:#f3ead3;clip-path:polygon(3% 0%,96% 3%,100% 32%,97% 58%,100% 80%,94% 100%,60% 96%,30% 100%,4% 94%,0% 58%,4% 30%,0% 4%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 20px rgba(36,31,24,.25)">
+            <div style="font-size:32px;color:#a12b24">▲</div>
+            <div style="font-family: 'Gaegu',cursive; font-size: 30px; color: #241f18; padding: 0 14px; text-align: center">"삼각산이"</div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;text-align:left;margin-bottom:22px">
+            <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+            <div style="background:#ded0b0;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">독립문이 세워진 1897년 무렵에는 태극기 모양이 정확히 정해져 있지 않았다네. 지금의 모양은 1949년에야 정식으로 정해졌어. 저 문 위의 깃발은 그 시절을 그대로 간직한 흔적일세.<br><br>그러고 보니, 그이도 열아홉 되던 해 이 문 앞에서 붙잡혔다고 하더군.</div>
+          </div>
+          <button onClick="{{ goS2Intro }}" style="width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer">다음 스팟으로</button>
+        </div>
+      </sc-if>
+
+      <!-- SPOT 2: 서재필 동상 -->
+      <sc-if value="{{ isS2Intro }}" hint-placeholder-val="{{ false }}">
+        
+      </sc-if>
+
+      <sc-if value="{{ isS2Intro }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px">
+          <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 2</div>
+          <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">서재필 동상</h2>
+          <image-slot id="photo-3" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="서재필 동상 사진"></image-slot>
+          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
+            <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+            <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">{{ s2IntroLine1 }}</div>
+          </div>
+          <image-slot id="map-1" shape="rounded" style="width: 341px; aspect-ratio: 4/3; margin-bottom: 14px; height: 190px" placeholder="약도 자리"></image-slot>
+          <button onClick="{{ goS2Mission }}" style="position:sticky;bottom:0;width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px">도착했다</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isS2Mission }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px">
+          <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 2 · 서재필 동상</div>
+          <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">쪽지 확인</h2>
+          <div style="background:#f3ead3;padding:22px 20px;margin:0 auto 22px;transform:rotate(1deg);clip-path:polygon(2% 2%,97% 0%,100% 30%,98% 55%,100% 80%,95% 100%,58% 97%,28% 100%,4% 95%,0% 62%,3% 32%,0% 6%);box-shadow:0 6px 16px rgba(36,31,24,.2)">
+            <p style="margin:0;font-family:'Gaegu',cursive;font-size:20px;line-height:1.85;color:#241f18">「이 어른은 총을 들지 않았다.<br>손에 쥔 종이가 곧 그의 무기였다.<br><br>그 이름은 저 문의 이름을 품고 있다.<br>품은 것을 내려놓으면<br>낯선 하나가 모습을 드러내리라.」</p>
+          </div>
+
+          <sc-if value="{{ isSpot2StageA }}" hint-placeholder-val="{{ true }}">
+            <image-slot id="photo-4" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:16px" placeholder="독립문 현판 사진"></image-slot>
+            <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:16px">
+              
+              
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;flex-direction:row-reverse;margin-bottom:14px">
+              <div style="background:#ded0b0;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">어? 저 한자는 아까 본 태극기 옆에 있는 한자인것같은데?</div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:16px">
+              <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+              <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">그렇지, 아까 그 문의 현판일세. 그런데 이 어른이 만든 신문의 이름과 나란히 놓아 보면 무언가 보일 걸세.</div>
+            </div>
+
+            <div style="background:#ded0b0;border-radius:8px;padding:24px 10px;text-align:center;margin-bottom:16px">
+              <div style="font-size:32px;letter-spacing:.4em;color:#241f18;margin-bottom:14px">門立獨</div>
+              <div style="font-size:24px;letter-spacing:.25em;color:#241f18">독립신문</div>
+            </div>
+            <p style="margin: 0 0 12px; font-size: 17px; color: #5c4a2e">소리 내어 읽으며 같은 글자끼리 짝을 지어보세요. 짝을 찾지 못하고 혼자 남은 글자는?</p>
+
+            <div style="display:flex;gap:8px;margin-bottom:10px">
+              <input value="{{ spot2Input }}" onChange="{{ setSpot2Input }}" placeholder="글자를 입력하시오" style="flex:1;padding:12px 14px;border:2px solid #241f18;border-radius:4px;font-size:16px;font-family:inherit;background:#fff">
+              <button onClick="{{ checkSpot2 }}" style="background:#241f18;color:#f3ead3;border:none;padding:12px 18px;border-radius:4px;font-size:15px;font-family:inherit;cursor:pointer">확인</button>
+            </div>
+            <sc-if value="{{ spot2Feedback }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:14px;color:{{ spot2FeedbackColor }};margin-bottom:14px;font-weight:700">{{ spot2Feedback }}</div>
+            </sc-if>
+
+            <button onClick="{{ showHint2 }}" disabled="{{ spot2HintDisabled }}" style="width:100%;background:none;border:1px solid #5c4a2e;color:#5c4a2e;padding:10px;border-radius:4px;font-size:14px;font-family:inherit;cursor:pointer;margin-bottom:10px">{{ spot2HintLabel }}</button>
+            <sc-for list="{{ spot2HintsVisible }}" as="h" hint-placeholder-count="0">
+              <div style="font-size:18px;color:#5c4a2e;background:#ded0b0;padding:10px 12px;border-radius:6px;margin-bottom:8px;line-height:1.6;font-family:'Gaegu',cursive">{{ h }}</div>
+            </sc-for>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isS2Complete }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px;text-align:center">
+          <div style="width:90px;height:90px;margin:0 auto 10px;border:3px double #a12b24;border-radius:50%;display:flex;align-items:center;justify-content:center;transform:rotate(6deg)">
+            <div style="font-size:22px;font-weight:800;color:#a12b24;letter-spacing:.1em">정답</div>
+          </div>
+          <p style="margin:0 0 20px;font-family:'Gaegu',cursive;font-size:16px;color:#a12b24">"소리를 하나하나 짚어내다니, 제법이구먼!"</p>
+          <div style="font-size:12.5px;letter-spacing:.15em;color:#5c4a2e;margin-bottom:10px">조각을 획득하였다</div>
+          <div style="width:170px;height:170px;margin:0 auto 20px;background:#f3ead3;clip-path:polygon(3% 0%,96% 3%,100% 32%,97% 58%,100% 80%,94% 100%,60% 96%,30% 100%,4% 94%,0% 58%,4% 30%,0% 4%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 20px rgba(36,31,24,.25)">
+            <div style="font-size:32px;color:#a12b24">●</div>
+            <div style="font-family:'Gaegu',cursive;font-size:30px;color:#241f18;padding:0 14px;text-align:center">"더덩실 <br>춤이라도 <br>추고"</div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;text-align:left;margin-bottom:22px">
+            <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+            <div style="background:#ded0b0;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">1896년, 이 어른은 우리나라 최초의 민간 신문을 만드셨다네. 그때까지 신문이란 한자로 쓰여 배운 이들만 읽을 수 있었지. 그런데 이 어른은 한글로만 찍어냈어.<br><br>그이도 총이 아닌 펜을 들었다고 하더군. 이 어른처럼 말일세.</div>
+          </div>
+          <button onClick="{{ goS3Intro }}" style="width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer">다음 스팟으로</button>
+        </div>
+      </sc-if>
+
+      <!-- SPOT 3: 3.1독립선언기념탑 -->
+      <sc-if value="{{ isS3Intro }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px">
+          <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 3</div>
+          <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">3·1독립선언기념탑</h2>
+          <image-slot id="photo-5" shape="rounded" style="width: 326px; aspect-ratio: 4/3; margin-bottom: 18px; height: 254px" placeholder="3·1독립선언기념탑 사진"></image-slot>
+          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
+            <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+            <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">여러 사람이 함께 만세를 부르는 모습이 새겨진 큰 조각탑을 찾게.</div>
+          </div>
+          <image-slot id="map-2" shape="rounded" style="width: 339px; aspect-ratio: 4/3; margin-bottom: 14px; height: 169px" placeholder="약도 자리"></image-slot>
+          <button onClick="{{ goS3Mission }}" style="position:sticky;bottom:0;width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px">도착했다</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isS3Mission }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px">
+          
+
+          <sc-if value="{{ isSpot3StageA }}" hint-placeholder-val="{{ true }}">
+            <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">쪽지 확인</h2>
+            <div style="background:#f3ead3;padding:22px 20px;margin:0 auto 22px;transform:rotate(1.2deg);clip-path:polygon(2% 2%,97% 0%,100% 30%,98% 55%,100% 80%,95% 100%,58% 97%,28% 100%,4% 95%,0% 62%,3% 32%,0% 6%);box-shadow:0 6px 16px rgba(36,31,24,.2)">
+              <p style="margin: 0; font-family: 'Gaegu',cursive; font-size: 20px; line-height: 1.85; color: #241f18; text-align: center">「순사가 가까이 왔다. <br>나는 이 길로 몸을 숨겼다.<br>이 길에는 발자국이 줄지어 있고, <br>저 탑 뒤에는 이름이 줄지어 있다.<br>발을 남긴 이보다 이름을 남긴 이가 더 많으니, 그 모자란 수를 <br>먼저 찾아라.<br>그 수가 가리키는 곳에 <br>다음 실마리가 있다.」</p>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
+              <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+              <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">잔디밭에 발자국이 잔뜩 있는데? 그건 진짜 발자국이란다. 나라를 위해 싸운 분들이 맨발로 직접 찍으신 거야.</div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:16px">
+              <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+              <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">3·1 독립선언문과 독립만세운동을 주도한 민족대표는 모두 몇 명이지? 발자국의 수와 견주어 보렴.</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:10px">
+              <input value="{{ spot3AInput }}" onChange="{{ setSpot3AInput }}" placeholder="숫자를 입력하시오" style="flex:1;padding:12px 14px;border:2px solid #241f18;border-radius:4px;font-size:16px;font-family:inherit;background:#fff">
+              <button onClick="{{ checkSpot3A }}" style="background:#241f18;color:#f3ead3;border:none;padding:12px 18px;border-radius:4px;font-size:15px;font-family:inherit;cursor:pointer">확인</button>
+            </div>
+            <sc-if value="{{ spot3AFeedback }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:14px;color:{{ spot3AFeedbackColor }};margin-bottom:14px;font-weight:700">{{ spot3AFeedback }}</div>
+            </sc-if>
+            <button onClick="{{ showHint3A }}" disabled="{{ spot3AHintDisabled }}" style="width:100%;background:none;border:1px solid #5c4a2e;color:#5c4a2e;padding:10px;border-radius:4px;font-size:14px;font-family:inherit;cursor:pointer;margin-bottom:10px">{{ spot3AHintLabel }}</button>
+            <sc-for list="{{ spot3AHintsVisible }}" as="h" hint-placeholder-count="0">
+              <div style="font-size:18px;color:#5c4a2e;background:#ded0b0;padding:10px 12px;border-radius:6px;margin-bottom:8px;line-height:1.6;font-family:'Gaegu',cursive">{{ h }}</div>
+            </sc-for>
+          </sc-if>
+
+          <sc-if value="{{ isSpot3StageB }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
+              <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+              <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">3이라… 저 탑 뒤로 가 보게. 이름이 새겨진 곳 말일세.</div>
+            </div>
+            <image-slot id="photo-stele-3" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:14px" placeholder="비석 사진"></image-slot>
+            
+            <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
+              <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+              <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">자, 여기 서른세 분의 이름이 새겨져 있구나.</div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;flex-direction:row-reverse;margin-bottom:14px">
+              <div style="background:#ded0b0;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">그런데 전부 한자잖아. 하나도 못 읽겠어…</div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
+              <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+              <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">하하, 나도 다는 못 읽는다네. 하지만 방금 그 숫자, 3과 뭔가 관련이 있을 것 같지 않은가?</div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:16px">
+              <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+              <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">옛날에는 글을 오늘날과 다르게 읽었다더군. 오른쪽에서부터, 위에서 아래로 읽었다고 하네. 그렇게 한번 세어보게.</div>
+            </div>
+            
+            <p style="margin: 0 0 12px; font-size: 18px; color: #5c4a2e">옛날 방식으로 읽었을 때 3번째 사람은?</p>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px">
+              <sc-for list="{{ spot3BOptions }}" as="opt" hint-placeholder-count="4">
+                <button onClick="{{ opt.select }}" style="border:2px solid {{ opt.borderColor }};background:#f3ead3;padding:13px;border-radius:6px;font-size:15px;font-family:inherit;cursor:pointer;text-align:left;color:#241f18">{{ opt.label }}</button>
+              </sc-for>
+            </div>
+            <sc-if value="{{ spot3BFeedback }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:14px;color:{{ spot3BFeedbackColor }};margin-bottom:14px;font-weight:700">{{ spot3BFeedback }}</div>
+            </sc-if>
+            <button onClick="{{ showHint3B }}" disabled="{{ spot3BHintDisabled }}" style="width:100%;background:none;border:1px solid #5c4a2e;color:#5c4a2e;padding:10px;border-radius:4px;font-size:14px;font-family:inherit;cursor:pointer;margin-bottom:10px">{{ spot3BHintLabel }}</button>
+            <sc-for list="{{ spot3BHintsVisible }}" as="h" hint-placeholder-count="0">
+              <div style="font-size:18px;color:#5c4a2e;background:#ded0b0;padding:10px 12px;border-radius:6px;margin-bottom:8px;line-height:1.6;font-family:'Gaegu',cursive">{{ h }}</div>
+            </sc-for>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isS3Complete }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px;text-align:center">
+          <div style="width:90px;height:90px;margin:0 auto 10px;border:3px double #a12b24;border-radius:50%;display:flex;align-items:center;justify-content:center;transform:rotate(-5deg)">
+            <div style="font-size:22px;font-weight:800;color:#a12b24;letter-spacing:.1em">정답</div>
+          </div>
+          <p style="margin:0 0 20px;font-family:'Gaegu',cursive;font-size:16px;color:#a12b24">"숨은 순서를 알아내다니 대단하군!"</p>
+          <div style="font-size:12.5px;letter-spacing:.15em;color:#5c4a2e;margin-bottom:10px">조각을 획득하였다</div>
+          <div style="width:170px;height:170px;margin:0 auto 20px;background:#f3ead3;clip-path:polygon(3% 0%,96% 3%,100% 32%,97% 58%,100% 80%,94% 100%,60% 96%,30% 100%,4% 94%,0% 58%,4% 30%,0% 4%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 20px rgba(36,31,24,.25)">
+            <div style="font-size:32px;color:#a12b24">★</div>
+            <div style="font-family: 'Gaegu',cursive; font-size: 30px; color: #241f18; padding: 0 14px; text-align: center; width: 185px; height: 113px">"이 목숨이 끊기기 전에"</div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;text-align:left;margin-bottom:22px">
+            <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+            <div style="background:#ded0b0;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">이 발자국들은 2019년, 그때 살아 계시던 독립운동가 분들이 직접 맨발을 찍으신 거란다. 그리고 이 탑 뒤에 새겨진 서른세 분은 1919년 3월 1일 독립선언서에 이름을 올린 민족대표란다.<br><br>그이도 그 봄, 경성의 학생 신분으로 이 만세 운동에 뛰어들었다가 붙잡혔다고 하더군.</div>
+          </div>
+          <button onClick="{{ goS4Intro }}" style="width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer">다음 스팟으로</button>
+        </div>
+      </sc-if>
+
+      <!-- SPOT 4: 유관순 열사 동상 -->
+      <sc-if value="{{ isS4Intro }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px">
+          <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 4</div>
+          <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">유관순 열사 동상</h2>
+          <image-slot id="photo-7" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="유관순 열사 동상 사진"></image-slot>
+          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
+            <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+            <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">태극기를 높이 든 소녀의 동상이 보이는가? 그 앞으로 가게.</div>
+          </div>
+          <image-slot id="map-3" shape="rounded" style="width: 340px; aspect-ratio: 4/3; margin-bottom: 14px; height: 185px" placeholder="약도 자리"></image-slot>
+          <button onClick="{{ goS4Mission }}" style="position:sticky;bottom:0;width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px">도착했다</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isS4Mission }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px">
+          <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 4 · 유관순 열사 동상</div>
+          <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">쪽지 확인</h2>
+          <div style="background:#f3ead3;padding:22px 20px;margin:0 auto 22px;transform:rotate(-0.8deg);clip-path:polygon(2% 2%,97% 0%,100% 30%,98% 55%,100% 80%,95% 100%,58% 97%,28% 100%,4% 95%,0% 62%,3% 32%,0% 6%);box-shadow:0 6px 16px rgba(36,31,24,.2)">
+            <p style="margin: 0; font-family: 'Gaegu',cursive; font-size: 20px; line-height: 1.85; color: #241f18; text-align: center">「이 앞에 새겨진 말 속에<br>셀 수 있는 것들이 숨어 있다.<br><br>하나씩 헤아려 이으면,<br>오래 기다려온 그날이 보이리라.」</p>
+          </div>
+
+          <image-slot id="photo-stele-4" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:16px" placeholder="비석 사진"></image-slot>
+
+          <div style="background:#ded0b0;border-radius:8px;padding:14px 16px;margin-bottom:16px">
+            <p style="margin: 0 0 6px; font-size: 15px; color: #241f18">① 첫소리가 'ㅅ'인 글자는 모두 몇 개?</p>
+            <p style="margin: 0 0 6px; font-size: 15px; color: #241f18">② 나라를 위해 바칠 목숨은 몇 개?</p>
+            <p style="margin: 0; font-size: 15px; color: #241f18">③ 고통받은 신체 부위는 몇 곳?</p>
+          </div>
+          <p style="margin: 0 0 10px; font-size: 15px; color: #5c4a2e">세 숫자를 순서대로 이어 쓰세요</p>
+
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <input value="{{ spot4Input }}" onChange="{{ setSpot4Input }}" placeholder="세 자리 숫자" style="flex:1;padding:12px 14px;border:2px solid #241f18;border-radius:4px;font-size:16px;font-family:inherit;background:#fff">
+            <button onClick="{{ checkSpot4 }}" style="background:#241f18;color:#f3ead3;border:none;padding:12px 18px;border-radius:4px;font-size:15px;font-family:inherit;cursor:pointer">확인</button>
+          </div>
+          <sc-if value="{{ spot4Feedback }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:14px;color:{{ spot4FeedbackColor }};margin-bottom:14px;font-weight:700">{{ spot4Feedback }}</div>
+          </sc-if>
+
+          <button onClick="{{ showHint4 }}" disabled="{{ spot4HintDisabled }}" style="width:100%;background:none;border:1px solid #5c4a2e;color:#5c4a2e;padding:10px;border-radius:4px;font-size:14px;font-family:inherit;cursor:pointer;margin-bottom:10px">{{ spot4HintLabel }}</button>
+          <sc-for list="{{ spot4HintsVisible }}" as="h" hint-placeholder-count="0">
+            <div style="font-size:18px;color:#5c4a2e;background:#ded0b0;padding:10px 12px;border-radius:6px;margin-bottom:8px;line-height:1.6;font-family:'Gaegu',cursive">{{ h }}</div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isS4Complete }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px;text-align:center">
+          <div style="width:90px;height:90px;margin:0 auto 10px;border:3px double #a12b24;border-radius:50%;display:flex;align-items:center;justify-content:center;transform:rotate(4deg)">
+            <div style="font-size:22px;font-weight:800;color:#a12b24;letter-spacing:.1em">정답</div>
+          </div>
+          <p style="margin:0 0 20px;font-family:'Gaegu',cursive;font-size:16px;color:#a12b24">"셋을 모두 세어 이으니, 우리가 기다리던 그 숫자가 나오는구나!"</p>
+          <div style="font-size:12.5px;letter-spacing:.15em;color:#5c4a2e;margin-bottom:10px">조각을 획득하였다</div>
+          <div style="width:170px;height:170px;margin:0 auto 20px;background:#f3ead3;clip-path:polygon(3% 0%,96% 3%,100% 32%,97% 58%,100% 80%,94% 100%,60% 96%,30% 100%,4% 94%,0% 58%,4% 30%,0% 4%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 20px rgba(36,31,24,.25)">
+            <div style="font-size:32px;color:#a12b24">◆</div>
+            <div style="font-family:'Gaegu',cursive;font-size:30px;color:#241f18;padding:0 14px;text-align:center">"기뻐서 <br>죽사오매"</div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;text-align:left;margin-bottom:22px">
+            <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+            <div style="background:#ded0b0;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">이 글은 유관순 열사께서 마지막으로 남기신 말씀이란다. 그 모진 고통도 참을 수 있다 하셨지만, 오직 나라를 잃은 고통만은 견딜 수 없다고 하셨어. 이 동상의 주인공은 그때 겨우 열여덟 살이었단다.<br><br>그러고 보니 815, 어디서 많이 들어본 숫자 같지 않은가?</div>
+          </div>
+          <button onClick="{{ goS5Intro }}" style="width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer">다음 스팟으로</button>
+        </div>
+      </sc-if>
+
+      <!-- SPOT 5: 순국선열추념탑 -->
+      <sc-if value="{{ isS5Intro }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px">
+          <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 5</div>
+          <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">순국선열추념탑</h2>
+          <image-slot id="photo-8" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="순국선열추념탑 사진"></image-slot>
+          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
+            <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+            <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">하늘로 길게 솟은 뾰족한 탑이 보이는가? 가장 높은 그 탑으로 가게.</div>
+          </div>
+          <image-slot id="map-4" shape="rounded" style="width: 337px; aspect-ratio: 4/3; margin-bottom: 14px; height: 173px" placeholder="약도 자리"></image-slot>
+          <button onClick="{{ goS5Mission }}" style="position:sticky;bottom:0;width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px">도착했다</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isS5Mission }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px">
+          <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 5 · 순국선열추념탑</div>
+          <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">쪽지 확인</h2>
+          <div style="background:#f3ead3;padding:22px 20px;margin:0 auto 22px;transform:rotate(0.9deg);clip-path:polygon(2% 2%,97% 0%,100% 30%,98% 55%,100% 80%,95% 100%,58% 97%,28% 100%,4% 95%,0% 62%,3% 32%,0% 6%);box-shadow:0 6px 16px rgba(36,31,24,.2)">
+            <p style="margin: 0; font-family: 'Gaegu',cursive; font-size: 20px; line-height: 1.85; color: #241f18; text-align: center">「이 탑의 이름을 소리 내어 <br>읽어보라.<br>그 소리마다 순서가 있다.<br>아는 소리로 모르는 소리를 채워라.」</p>
+          </div>
+
+          
+          <div style="background: #ded0b0; border-radius: 8px; padding: 16px; margin: 0 auto 16px; display: flex; flex-direction: column; gap: 6px; width: 140px; height: 213px; justify-content: center; align-items: stretch; position: static">
+            
+            <div style="display: flex; justify-content: space-between; color: #241f18; font-size: 20px"><span>순</span><span>→</span><span style="font-weight:700">7</span></div><div style="display: flex; justify-content: space-between; font-size: 20px; color: #241f18"><span>국</span><span>→</span><span style="font-weight:800;color:#a12b24">?</span></div>
+            <div style="display: flex; justify-content: space-between; color: 20; font-size: 20px"><span>선</span><span>→</span><span style="font-weight:700">3</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 20px; color: #241f18"><span>열</span><span>→</span><span style="font-weight:800;color:#a12b24">?</span></div>
+            <div style="display: flex; justify-content: space-between; color: 20; font-size: 20px"><span>추</span><span>→</span><span style="font-weight:700">7</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 20px; color: #241f18"><span>념</span><span>→</span><span style="font-weight:800;color:#a12b24">?</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 20px; color: #241f18"><span>탑</span><span>→</span><span style="font-weight:700">1</span></div>
+          </div><p style="margin: 0 0 10px; font-size: 15px; color: #5c4a2e">물음표 세 개에 들어갈 숫자를 순서대로</p>
+
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <input value="{{ spot5Input }}" onChange="{{ setSpot5Input }}" placeholder="" style="flex:1;padding:12px 14px;border:2px solid #241f18;border-radius:4px;font-size:16px;font-family:inherit;background:#fff">
+            <button onClick="{{ checkSpot5 }}" style="background:#241f18;color:#f3ead3;border:none;padding:12px 18px;border-radius:4px;font-size:15px;font-family:inherit;cursor:pointer">확인</button>
+          </div>
+          <sc-if value="{{ spot5Feedback }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:14px;color:{{ spot5FeedbackColor }};margin-bottom:14px;font-weight:700">{{ spot5Feedback }}</div>
+          </sc-if>
+
+          <button onClick="{{ showHint5 }}" disabled="{{ spot5HintDisabled }}" style="width:100%;background:none;border:1px solid #5c4a2e;color:#5c4a2e;padding:10px;border-radius:4px;font-size:14px;font-family:inherit;cursor:pointer;margin-bottom:10px">{{ spot5HintLabel }}</button>
+          <sc-for list="{{ spot5HintsVisible }}" as="h" hint-placeholder-count="0">
+            <div style="font-size:18px;color:#5c4a2e;background:#ded0b0;padding:10px 12px;border-radius:6px;margin-bottom:8px;line-height:1.6;font-family:'Gaegu',cursive">{{ h }}</div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isS5Complete }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px;text-align:center">
+          <div style="width:90px;height:90px;margin:0 auto 10px;border:3px double #a12b24;border-radius:50%;display:flex;align-items:center;justify-content:center;transform:rotate(-6deg)">
+            <div style="font-size:22px;font-weight:800;color:#a12b24;letter-spacing:.1em">정답</div>
+          </div>
+          <p style="margin:0 0 20px;font-family:'Gaegu',cursive;font-size:16px;color:#a12b24">"글자 속에 숨은 소리의 순서를 찾아내다니, 놀랍구나!"</p>
+          <div style="font-size:12.5px;letter-spacing:.15em;color:#5c4a2e;margin-bottom:10px">조각을 획득하였다</div>
+          <div style="width:170px;height:170px;margin:0 auto 20px;background:#f3ead3;clip-path:polygon(3% 0%,96% 3%,100% 32%,97% 58%,100% 80%,94% 100%,60% 96%,30% 100%,4% 94%,0% 58%,4% 30%,0% 4%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 20px rgba(36,31,24,.25)">
+            <div style="font-size:32px;color:#a12b24">♥</div>
+            <div style="font-family:'Gaegu',cursive;font-size:30px;color:#241f18;padding:0 14px;text-align:center">"용솟음칠"</div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;text-align:left;margin-bottom:22px">
+            <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+            <div style="background:#ded0b0;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">이름 하나 남기지 못한 채 스러진 이들이 이렇게나 많았다는 걸, 이 탑이 말해주고 있구먼.</div>
+          </div>
+          <button onClick="{{ goS6Intro }}" style="width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer">다음 스팟으로</button>
+        </div>
+      </sc-if>
+
+      <!-- SPOT 6: 경성구치감 발굴지 -->
+      <sc-if value="{{ isS6Intro }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px">
+          <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 6</div>
+          <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">경성구치감 발굴지</h2>
+          <image-slot id="photo-9" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="경성구치감 발굴지 사진"></image-slot>
+          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
+            <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+            <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">땅이 파헤쳐지고 벽돌이 쌓인 발굴 현장이 보이는가? 그곳으로 가게.</div>
+          </div>
+          <image-slot id="map-5" shape="rounded" style="width: 337px; aspect-ratio: 4/3; margin-bottom: 14px; height: 191px" placeholder="약도 자리"></image-slot>
+          <button onClick="{{ goS6Mission }}" style="position:sticky;bottom:0;width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px">도착했다</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isS6Mission }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px">
+          <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 6 · 경성구치감 발굴지</div>
+
+          <sc-if value="{{ isSpot6StageA }}" hint-placeholder-val="{{ true }}">
+            <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">쪽지 확인</h2>
+            <div style="background:#f3ead3;padding:22px 20px;margin:0 auto 22px;transform:rotate(-1.1deg);clip-path:polygon(2% 2%,97% 0%,100% 30%,98% 55%,100% 80%,95% 100%,58% 97%,28% 100%,4% 95%,0% 62%,3% 32%,0% 6%);box-shadow:0 6px 16px rgba(36,31,24,.2)">
+              <p style="margin: 0; font-family: 'Gaegu',cursive; font-size: 20px; line-height: 1.85; color: #241f18; text-align: center">「나는 여기서 갇혔었다.<br>이 땅 밑에는 그때의 길이 <br>아직 남아 있다.<br>여러 그림 중 내가 걸었던 <br>그 길을 찾아라.<br>그림을 찾으면, 내가 걸었던 <br>발걸음을 따라오라.<br>시간이 없다.」</p>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
+              <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+              <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">여기가 그이가 갇혔던 곳이라네. 이 발굴터 바로 옆이 서대문형무소일세.</div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;flex-direction:row-reverse;margin-bottom:14px">
+              <div style="background:#ded0b0;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">벽돌 사이에서 잉크병을 찾았어! 안에 쪽지가 들어 있어. "여러 그림 중 내가 걸었던 그 길을 찾아라"…</div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:16px">
+              <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+              <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">이 발굴지 곳곳에 안내판이 여럿 있구먼. 화면에 뜬 그림과 같은 것을 찾아보게.</div>
+            </div>
+            <image-slot id="photo-10" shape="rounded" style="width: 327px; aspect-ratio: 4/3; margin-bottom: 16px; height: 368px" placeholder="경성구치감 건축 도면"></image-slot>
+            <p style="margin: 0 0 12px; font-size: 18px; color: #5c4a2e; text-align: center">현장의 여러 안내판 중, <br>위 도면과 일치하는 것을 찾았다면</p>
+            <button onClick="{{ goSpot6StageB }}" style="width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer">찾았다</button>
+          </sc-if>
+
+          <sc-if value="{{ isSpot6StageB }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:16px">
+              <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+              <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">오, 정말 도면을 찾았구먼! 쪽지에 "내가 걸었던 발걸음을 따라오라"고 했지 않은가. 화살표가 있을 텐데, 그걸 하나씩 따라가 보게.</div>
+            </div>
+            <image-slot id="photo-11" shape="rounded" style="width: 328px; aspect-ratio: 4/3; margin-bottom: 16px; height: 326px" placeholder="미로 도식화 그림"></image-slot>
+            <div style="background:#ded0b0;border-radius:8px;padding:16px;margin-bottom:14px;text-align:center">
+              <div style="font-size:13px;color:#5c4a2e;margin-bottom:8px">시작점 [●]&nbsp; ← ↓ ↓ ← ↑ ↑ ↑ ← ↑</div>
+              <div style="font-size:12px;color:#5c4a2e">화살표를 따라가면 도착하는 출구 번호는?</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+              <sc-for list="{{ spot6BOptions }}" as="opt" hint-placeholder-count="4">
+                <button onClick="{{ opt.select }}" style="border:2px solid {{ opt.borderColor }};background:#f3ead3;padding:14px 6px;border-radius:6px;font-size:16px;font-family:inherit;cursor:pointer;color:#241f18">{{ opt.label }}</button>
+              </sc-for>
+            </div>
+            <sc-if value="{{ spot6BFeedback }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:14px;color:{{ spot6BFeedbackColor }};margin-bottom:14px;font-weight:700">{{ spot6BFeedback }}</div>
+            </sc-if>
+            <button onClick="{{ showHint6B }}" disabled="{{ spot6BHintDisabled }}" style="width:100%;background:none;border:1px solid #5c4a2e;color:#5c4a2e;padding:10px;border-radius:4px;font-size:14px;font-family:inherit;cursor:pointer;margin-bottom:10px">{{ spot6BHintLabel }}</button>
+            <sc-for list="{{ spot6BHintsVisible }}" as="h" hint-placeholder-count="0">
+              <div style="font-size:18px;color:#5c4a2e;background:#ded0b0;padding:10px 12px;border-radius:6px;margin-bottom:8px;line-height:1.6;font-family:'Gaegu',cursive">{{ h }}</div>
+            </sc-for>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isS6Complete }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px;text-align:center">
+          <div style="width:90px;height:90px;margin:0 auto 10px;border:3px double #a12b24;border-radius:50%;display:flex;align-items:center;justify-content:center;transform:rotate(7deg)">
+            <div style="font-size:22px;font-weight:800;color:#a12b24;letter-spacing:.1em">정답</div>
+          </div>
+          <p style="margin:0 0 20px;font-family:'Gaegu',cursive;font-size:16px;color:#a12b24">"미로 속에서 길을 잃지 않았군!"</p>
+          <div style="font-size:12.5px;letter-spacing:.15em;color:#5c4a2e;margin-bottom:10px">조각을 획득하였다</div>
+          <div style="width: 220px; height: 179px; margin: 0 auto 20px; background: #f3ead3; clip-path: polygon(3% 0%,96% 3%,100% 32%,97% 58%,100% 80%,94% 100%,60% 96%,30% 100%,4% 94%,0% 58%,4% 30%,0% 4%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 20px rgba(36,31,24,.25)">
+            <div style="font-size:32px;color:#a12b24">✚</div>
+            <div style="font-family:'Gaegu',cursive;font-size:30px;color:#241f18;padding:0 14px;text-align:center">"두개골은 깨어져 산산조각이 나도"</div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;text-align:left;margin-bottom:22px">
+            <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+            <div style="background:#ded0b0;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">②로 나가면 되겠구먼! 이곳은 경성구치감이라 불리던 곳이라네. 서대문형무소보다 앞서 지어져, 수많은 이들이 이곳을 거쳐 갔지.<br><br>그이도 1919년, 이 발굴터 바로 옆 담장 너머에 갇혔던 적이 있다고 하더군.</div>
+          </div>
+          <button onClick="{{ goS7Intro }}" style="width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer">다음 스팟으로</button>
+        </div>
+      </sc-if>
+
+      <!-- SPOT 7: 서대문형무소역사관 입구 (최종) -->
+      <sc-if value="{{ isS7Intro }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px">
+          <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 7 · 최종</div>
+          <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">서대문형무소역사관 입구</h2>
+          <image-slot id="photo-12" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="서대문형무소역사관 입구 사진"></image-slot>
+          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
+            <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+            <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">드디어 여기까지 왔군. 붉은 벽돌의 이 문이 마지막이라네.</div>
+          </div>
+          <image-slot id="map-6" shape="rounded" style="width: 327px; aspect-ratio: 4/3; margin-bottom: 14px; height: 179px" placeholder="약도 자리"></image-slot>
+          <button onClick="{{ goS7Mission }}" style="position:sticky;bottom:0;width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px">도착했다</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isS7Mission }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px">
+          <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 7 · 형무소 입구</div>
+
+          <sc-if value="{{ isSpot7StageMath }}" hint-placeholder-val="{{ true }}">
+            <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">쪽지 확인</h2>
+            <div style="background:#f3ead3;padding:22px 20px;margin:0 auto 22px;transform:rotate(1.3deg);clip-path:polygon(2% 2%,97% 0%,100% 30%,98% 55%,100% 80%,95% 100%,58% 97%,28% 100%,4% 95%,0% 62%,3% 32%,0% 6%);box-shadow:0 6px 16px rgba(36,31,24,.2)">
+              <p style="margin: 0; font-family: 'Gaegu',cursive; font-size: 20px; line-height: 1.85; color: #241f18; text-align: center">「이 문의 생김새를 눈으로 그려보라.<br>뾰족한 지붕이 있고, 아치문이 있고,<br>네모난 돌들이 있고, 높은 탑이 있다.<br>다만 그림이 전부는 아니다.<br>그려진 대로 믿지 말고, 실제로 본 것을 떠올려라.」</p>
+            </div>
+            <image-slot id="photo-13" shape="rounded" style="width: 325px; aspect-ratio: 4/3; margin-bottom: 16px; height: 352px" placeholder="형무소 입면 그림"></image-slot>
+
+            <div style="display:flex;gap:8px;margin-bottom:10px">
+              <input value="{{ spot7Input }}" onChange="{{ setSpot7Input }}" placeholder="숫자를 입력하시오" style="flex:1;padding:12px 14px;border:2px solid #241f18;border-radius:4px;font-size:16px;font-family:inherit;background:#fff">
+              <button onClick="{{ checkSpot7 }}" style="background:#241f18;color:#f3ead3;border:none;padding:12px 18px;border-radius:4px;font-size:15px;font-family:inherit;cursor:pointer">확인</button>
+            </div>
+            <sc-if value="{{ spot7Feedback }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:14px;color:{{ spot7FeedbackColor }};margin-bottom:14px;font-weight:700">{{ spot7Feedback }}</div>
+            </sc-if>
+
+            <button onClick="{{ showHint7 }}" disabled="{{ spot7HintDisabled }}" style="width:100%;background:none;border:1px solid #5c4a2e;color:#5c4a2e;padding:10px;border-radius:4px;font-size:14px;font-family:inherit;cursor:pointer;margin-bottom:10px">{{ spot7HintLabel }}</button>
+            <sc-for list="{{ spot7HintsVisible }}" as="h" hint-placeholder-count="0">
+              <div style="font-size:18px;color:#5c4a2e;background:#ded0b0;padding:10px 12px;border-radius:6px;margin-bottom:8px;line-height:1.6;font-family:'Gaegu',cursive">{{ h }}</div>
+            </sc-for>
+          </sc-if>
+
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isS7Complete }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px;text-align:center">
+          <div style="width:90px;height:90px;margin:0 auto 10px;border:3px double #a12b24;border-radius:50%;display:flex;align-items:center;justify-content:center;transform:rotate(-4deg)">
+            <div style="font-size:22px;font-weight:800;color:#a12b24;letter-spacing:.1em">정답</div>
+          </div>
+          <p style="margin:0 0 20px;font-family:'Gaegu',cursive;font-size:16px;color:#a12b24">"마지막 수수께끼까지 풀어내다니, 정말 대단하네!"</p>
+          <div style="font-size:12.5px;letter-spacing:.15em;color:#5c4a2e;margin-bottom:10px">마지막 조각을 획득하였다</div>
+          <div style="width: 198px; height: 168px; margin: 0 auto 20px; background: #f3ead3; clip-path: polygon(3% 0%,96% 3%,100% 32%,97% 58%,100% 80%,94% 100%,60% 96%,30% 100%,4% 94%,0% 58%,4% 30%,0% 4%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 20px rgba(36,31,24,.25)">
+            <div style="font-size:32px;color:#a12b24">◈</div>
+            <div style="font-family: 'Gaegu',cursive; font-size: 30px; color: #241f18; padding: 0 14px; text-align: center; width: 189px; height: 74px">"그날이오면"</div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;text-align:left;margin-bottom:22px">
+            <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
+            <div style="background:#ded0b0;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">이제 정말 마지막일세. 지금까지 모은 조각으로 시를 완성해보게.</div>
+          </div>
+          <button onClick="{{ goEndFill }}" style="width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer">시 완성하러 가기</button>
+        </div>
+      </sc-if>
+
+      <!-- ENDING -->
+      <sc-if value="{{ isEndFill }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 140px">
+          <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">최종</div>
+          <h2 style="margin:0 0 8px;font-size:21px;color:#241f18">시를 완성하라</h2>
+          <p style="margin:0 0 16px;font-size:13px;color:#5c4a2e;line-height:1.6">빈칸을 누른 뒤, 아래 조각 중 알맞은 것을 골라 채우세요.</p>
+          <div style="background:#f3ead3;border-radius:6px;padding:18px 16px;box-shadow:0 4px 14px rgba(36,31,24,.15);margin-bottom:18px">
+            <p style="margin:0 0 10px;font-size:15px;line-height:1.8;color:#241f18;font-family:'Gaegu',cursive">
+              <span onClick="{{ blanks.b1.tap }}" style="cursor:pointer;text-decoration:underline;text-decoration-style:dotted;color:{{ blanks.b1.color }};font-weight:{{ blanks.b1.weight }}">{{ blanks.b1.label }}</span> 그날이 오면은
+            </p>
+            <p style="margin:0 0 10px;font-size:15px;line-height:1.8;color:#241f18;font-family:'Gaegu',cursive">
+              <span onClick="{{ blanks.b2.tap }}" style="cursor:pointer;text-decoration:underline;text-decoration-style:dotted;color:{{ blanks.b2.color }};font-weight:{{ blanks.b2.weight }}">{{ blanks.b2.label }}</span> 일어나 <span onClick="{{ blanks.b3.tap }}" style="cursor:pointer;text-decoration:underline;text-decoration-style:dotted;color:{{ blanks.b3.color }};font-weight:{{ blanks.b3.weight }}">{{ blanks.b3.label }}</span>
+            </p>
+            <p style="margin:0 0 10px;font-size:15px;line-height:1.8;color:#241f18;font-family:'Gaegu',cursive">
+              한강물이 뒤집혀 <span onClick="{{ blanks.b4.tap }}" style="cursor:pointer;text-decoration:underline;text-decoration-style:dotted;color:{{ blanks.b4.color }};font-weight:{{ blanks.b4.weight }}">{{ blanks.b4.label }}</span> 그날이
+            </p>
+            <p style="margin:0 0 10px;font-size:15px;line-height:1.8;color:#241f18;font-family:'Gaegu',cursive">
+              <span onClick="{{ blanks.b5.tap }}" style="cursor:pointer;text-decoration:underline;text-decoration-style:dotted;color:{{ blanks.b5.color }};font-weight:{{ blanks.b5.weight }}">{{ blanks.b5.label }}</span> 와주기만 하량이면
+            </p>
+            <p style="margin:0 0 10px;font-size:15px;line-height:1.8;color:#241f18;font-family:'Gaegu',cursive">나는 밤하늘에 날으는 까마귀와 같이</p>
+            <p style="margin:0 0 10px;font-size:15px;line-height:1.8;color:#241f18;font-family:'Gaegu',cursive">종로의 인경을 머리로 들이받아 울리오리다</p>
+            <p style="margin:0 0 10px;font-size:15px;line-height:1.8;color:#241f18;font-family:'Gaegu',cursive">
+              <span onClick="{{ blanks.b6.tap }}" style="cursor:pointer;text-decoration:underline;text-decoration-style:dotted;color:{{ blanks.b6.color }};font-weight:{{ blanks.b6.weight }}">{{ blanks.b6.label }}</span>
+            </p>
+            <p style="margin:0;font-size:15px;line-height:1.8;color:#241f18;font-family:'Gaegu',cursive">
+              <span onClick="{{ blanks.b7.tap }}" style="cursor:pointer;text-decoration:underline;text-decoration-style:dotted;color:{{ blanks.b7.color }};font-weight:{{ blanks.b7.weight }}">{{ blanks.b7.label }}</span> 오히려 무슨 한이 남으오리까
+            </p>
+          </div>
+
+          <sc-if value="{{ fillFeedback }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:14px;color:{{ fillFeedbackColor }};margin-bottom:12px;font-weight:700;text-align:center">{{ fillFeedback }}</div>
+          </sc-if>
+
+          <sc-if value="{{ hasActiveBlank }}" hint-placeholder-val="{{ false }}">
+            <p style="margin:0 0 10px;font-size:13px;color:#5c4a2e;text-align:center">빈칸에 넣을 조각을 고르세요</p>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ pieceBank }}" as="p" hint-placeholder-count="7">
+                <button onClick="{{ p.pick }}" style="border:2px solid #5c4a2e;background:#f3ead3;padding:12px;border-radius:6px;font-size:14px;font-family:'Gaegu',cursive;cursor:pointer;color:#241f18;text-align:left">{{ p.symbol }} {{ p.text }}</button>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ allBlanksFilled }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ goEndGuess }}" style="width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:18px">정체 추리하기</button>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isEndGuess }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 22px 100px">
+          <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">최종</div>
+          <h2 style="margin: 0 0 14px; font-size: 21px; color: #241f18; line-height: 1.4; text-align: center">이 시의 작가이자, <br>사라진 독립운동가는 누구일까요?</h2>
+          
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ guessOptions }}" as="opt" hint-placeholder-count="3">
+              <button onClick="{{ opt.select }}" style="border:2px solid {{ opt.borderColor }};background:#f3ead3;padding:14px;border-radius:6px;font-size:16px;font-family:inherit;cursor:pointer;text-align:left;color:#241f18">{{ opt.label }}</button>
+            </sc-for>
+          </div>
+          <sc-if value="{{ guessFeedback }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:14px;color:{{ guessFeedbackColor }};margin-top:12px;font-weight:700">{{ guessFeedback }}</div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isEndReveal }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:36px 24px 60px;text-align:center">
+          <div style="width:1px;height:20px;background:#241f18;margin:0 auto 10px"></div>
+          <div style="font-size:13.5px;color:#5c4a2e;letter-spacing:.1em;margin-bottom:14px">정체 공개</div>
+          <h1 style="margin:0 0 6px;font-size:34px;color:#a12b24;font-weight:800">심훈</h1>
+          <div style="font-size:14px;color:#5c4a2e;margin-bottom:22px">沈熏 · 1901–1936 · 「그날이 오면」</div>
+
+          <div style="background:#f3ead3;padding:18px;border-radius:4px;text-align:left;margin-bottom:20px;box-shadow:0 4px 14px rgba(36,31,24,.15)">
+            <p style="margin: 0 0 10px; font-size: 14.5px; line-height: 1.75; color: #241f18; text-align: center">열아홉 살, 이 근처에서 붙잡혔던 이름 없는 청년. 총 대신 펜을 들었고, <br>'그날이 오면'이라는 시를 남겼습니다.</p>
+            <p style="margin: 0; font-size: 14.5px; line-height: 1.75; color: #241f18; text-align: center">그가 그토록 기다린 '그날'은 바로 오늘<br>&nbsp;— 8월 15일, 광복절입니다.</p>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:flex-start;text-align:left;margin-bottom:24px">
+            
+            
+          </div>
+
+          <div style="font-size:12.5px;letter-spacing:.15em;color:#5c4a2e;margin-bottom:12px">완주 보상은 참가 신청 부스에서 받으세요<br>(오늘 17:00까지)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px">
+            <sc-for list="{{ rewards }}" as="r" hint-placeholder-count="5">
+              
+            </sc-for>
+          </div>
+
+          <button onClick="{{ restart }}" style="width:100%;background:#241f18;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer">처음으로</button>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const CHARS = [
+  {id:'yoo', name:'유관순', trait:'용기·직관', tone:'담대하고 뜨거움', img:'assets/char-yoo.png'},
+  {id:'ahn', name:'안중근', trait:'결단·신념', tone:'묵직하고 단호함', img:'assets/char-ahn.png'},
+  {id:'yoon', name:'윤봉길', trait:'정밀·계획', tone:'차분하고 논리적', img:'assets/char-yoon.png'},
+  {id:'kimgu', name:'김구', trait:'지혜·통솔', tone:'든든하고 자상함', img:'assets/char-kimgu.png'}
+];
+
+const ORDER = ['cover','select',
+  's1intro','s1mission','s1complete',
+  's2intro','s2mission','s2complete',
+  's3intro','s3mission','s3complete',
+  's4intro','s4mission','s4complete',
+  's5intro','s5mission','s5complete',
+  's6intro','s6mission','s6complete',
+  's7intro','s7mission','s7complete',
+  'endFill','endGuess','endReveal'];
+
+const STEP_LABELS = {
+  select:'조력자 선택',
+  s1intro:'스팟 1 · 장소 안내', s1mission:'스팟 1 · 미션', s1complete:'스팟 1 · 완료',
+  s2intro:'스팟 2 · 장소 안내', s2mission:'스팟 2 · 미션', s2complete:'스팟 2 · 완료',
+  s3intro:'스팟 3 · 장소 안내', s3mission:'스팟 3 · 미션', s3complete:'스팟 3 · 완료',
+  s4intro:'스팟 4 · 장소 안내', s4mission:'스팟 4 · 미션', s4complete:'스팟 4 · 완료',
+  s5intro:'스팟 5 · 장소 안내', s5mission:'스팟 5 · 미션', s5complete:'스팟 5 · 완료',
+  s6intro:'스팟 6 · 장소 안내', s6mission:'스팟 6 · 미션', s6complete:'스팟 6 · 완료',
+  s7intro:'스팟 7 · 장소 안내', s7mission:'스팟 7 · 미션', s7complete:'스팟 7 · 완료',
+  endFill:'엔딩 · 시 완성', endGuess:'엔딩 · 추리', endReveal:'엔딩 · 공개'
+};
+
+const S1_INTRO = {
+  yoo:"저기 저 커다란 돌문 보이지?\n어서 가보자! 지도 볼 것 없어,\n눈으로 똑바로 찾아가자!",
+  ahn:"저 멀리 돌로 된 아치문이 보인다.\n지도는 필요 없다.\n눈으로 직접 찾아라.",
+  yoon:"저 앞의 아치형 돌문을 목표로 삼읍시다.\n지도 없이, 시야로\n위치를 가늠해 이동하지요.",
+  kimgu:"저 멀리 커다란 아치형 돌문이 보이는가?\n지도를 보지 말고, 그대 눈으로\n저 문을 직접 찾아가게!"
+};
+const S2_INTRO = {
+  yoo:"손을 번쩍 든 동상이 보이지? 저분이야. 글과 신문으로 나라를 지키신 분!",
+  ahn:"손을 든 동상을 찾아라. 총이 아닌 붓으로 나라를 지킨 이다.",
+  yoon:"한 손을 든 동상 쪽으로 이동합시다. 신문과 글로 나라를 지킨 분입니다.",
+  kimgu:"한 손을 높이 든 사람의 동상을 찾게. 글과 신문으로 나라를 지킨 이일세."
+};
+const REVEAL = {
+  yoo:"빈 돌판이 왜 비어 있었는지 알겠지? 이름 없던 그분이 드디어 이름을 되찾았어!",
+  ahn:"빈 돌판의 뜻을 알겠는가. 이름 없이 사라졌던 이가, 마침내 이름을 되찾았다.",
+  yoon:"빈 돌판이 비어 있던 이유를 이제 알겠지요. 이름 없던 그분이 마침내 이름을 되찾았습니다.",
+  kimgu:"빈 돌판이 비어 있던 이유, 이제 알겠는가? 이름 없이 사라졌던 이가 마침내 이름을 되찾은 것일세."
+};
+
+const SPOT1_HINTS = [
+  '그 시절의 깃발은 지금과 달랐다네. 쪽지에 뭐라 적혀 있었지? "과거를 더해야 오늘이 보이리라"… 그 말이 곧 열쇠일세. 더한다 — 무엇을 더하라는 뜻이겠나?',
+  '네 귀퉁이의 까만 막대가 몇 줄인지 세어 보았는가? 3줄도 있고, 5줄도 있을 걸세.',
+  '이미 적힌 세 숫자를 보게. 오늘의 줄 수와 그 시절의 줄 수를 합한 값일세. 같은 방법으로 빈칸을 채우면 되네.'
+];
+const SPOT2_HINTS = [
+  "門은 '문', 立은 '립', 獨은 '독'이라 읽는다네. 소리 내어 하나씩 읽어보게.",
+  '독립신문의 넉 자도 소리 내어 읽어보게. 두 줄에서 같은 소리끼리 짝을 지어보게.',
+  '짝을 다 지었는데도 혼자 남는 소리가 있을 걸세. 그것이 답일세.'
+];
+const SPOT3A_HINTS = [
+  '잔디밭 발자국을 세어 보렴.',
+  '3·1 독립선언문과 독립만세운동을 주도한 민족대표는 모두 몇 명이었는지 탑 쪽 안내판을 확인해 보렴.',
+  '두 수의 차이를 계산해 보렴.'
+];
+const SPOT3B_HINTS = [
+  '오른쪽 끝 줄부터 세어 보게. 하나, 둘, 셋…',
+  '줄을 세었으면, 이번엔 그 줄에서 위에서부터 다시 세어 보게.',
+  '오른쪽에서 세 번째 줄, 그리고 위에서 세 번째. 그 자리의 이름을 보기에서 찾아보게.'
+];
+const SPOT4_HINTS = [
+  "첫 번째 물음부터 풀어보게. 비석 글 속에서 'ㅅ'으로 시작하는 글자를 하나씩 짚어가며 세어 보게. 손, 수, 사… 여러 개가 있을 걸세.",
+  '두 번째 물음은 쉬울 걸세. "나라를 위해 바칠 목숨이 ( )밖에 없는"이라 하지 않았던가.',
+  '세 번째 물음은 앞부분을 다시 보게. 손톱, 귀, 코, 손, 다리… 아파했던 곳을 하나씩 세어 보게.'
+];
+const SPOT5_HINTS = [
+  '순, 국, 선, 열, 추, 념, 탑 — 이 일곱 글자를 하나씩 천천히 발음해 보게. 숫자와 무슨 관계가 있을 것 같지 않은가?',
+  '각 글자 안에 있는 소리를 자음과 모음으로 나눠 보게. 그중 모음에 주목해 보게.',
+  "ㅏㅑㅓㅕㅗㅛㅜㅠㅡㅣ — 이 열 개의 기본 모음이 순서대로 있다네. '순'의 모음은 'ㅜ'인데, 이 순서에서 몇 번째인지 세어 보면 7이 나온다네. 같은 방법으로 나머지 글자들도 세어 보게."
+];
+const SPOT6B_HINTS = [
+  '이 발굴지에 안내판이 여러 개 있구먼. 화면 속 그림과 하나씩 견주어 보게.',
+  '맞는 안내판을 찾았다면, 도면 오른쪽 빨간 점이 시작점일세.',
+  '화살표를 하나씩, 순서대로 따라가 보게. 왼쪽·아래·위 한 칸씩 말일세.'
+];
+const SPOT7_HINTS = [
+  '색깔마다 도형이 하나씩 숨어 있다네. 초록은 저 둥근 아치문, 파랑은 저 네모난 돌 장식일세.',
+  '"+2=6"과 "+12=16"을 보게. 둘 다 도형의 꼭짓점 수에 그림 속 개수를 더한 것일세. 보라색은 저 높은 탑을 가리킨다네.',
+  '그림 속 탑은 사각형처럼 보이지 않던가? 실제로 탑 아래에 서서 올려다보게. 그림과 다른 모양이 보일 걸세.'
+];
+
+const GUESS_CLUES = [
+  '열아홉 살에 이 문 근처에서 붙잡힘 (스팟 1)',
+  '총 대신 펜(신문)을 들었음 (스팟 2)',
+  '그 봄, 학생 신분으로 만세 운동에 뛰어들었다가 붙잡힘 (스팟 3)',
+  '저 담장 너머(서대문형무소)에 갇혔던 적이 있음 (스팟 6)'
+];
+const REWARDS = ['미니노트', '에코백', '안경닦이', '엽서', '볼펜'];
+
+const PIECES = [
+  { key: 'p1', symbol: '▲', text: '삼각산이' },
+  { key: 'p2', symbol: '●', text: '더덩실 춤이라도 추고' },
+  { key: 'p3', symbol: '★', text: '이 목숨이 끊기기 전에' },
+  { key: 'p4', symbol: '◆', text: '기뻐서 죽사오매' },
+  { key: 'p5', symbol: '♥', text: '용솟음칠' },
+  { key: 'p6', symbol: '✚', text: '두개골은 깨어져 산산조각이 나도' },
+  { key: 'p7', symbol: '◈', text: '그날이 오면' }
+];
+
+const BLANK_ANSWER = {
+  b1: '그날이 오면', b2: '삼각산이', b3: '더덩실 춤이라도 추고',
+  b4: '용솟음칠', b5: '이 목숨이 끊기기 전에',
+  b6: '두개골은 깨어져 산산조각이 나도', b7: '기뻐서 죽사오매'
+};
+const BLANK_IDS = ['b1','b2','b3','b4','b5','b6','b7'];
+
+class Component extends DCLogic {
+  state = {
+    screen: 'cover', selectedChar: 'kimgu',
+    timeLeft: 3300, timerRunning: false,
+    gotP1:false, gotP2:false, gotP3:false, gotP4:false, gotP5:false, gotP6:false, gotP7:false,
+    showPiecesModal: false,
+    spot1Input:'', spot1Correct:false, spot1Feedback:'', spot1HintStage:0,
+    spot2Stage:'a', spot2Input:'', spot2Correct:false, spot2Feedback:'', spot2HintStage:0,
+    spot3Stage:'a', spot3AInput:'', spot3ACorrect:false, spot3AFeedback:'', spot3AHintStage:0,
+    spot3BSelected:null, spot3BCorrect:false, spot3BFeedback:'', spot3BHintStage:0,
+    spot4Input:'', spot4Correct:false, spot4Feedback:'', spot4HintStage:0,
+    spot5Input:'', spot5Correct:false, spot5Feedback:'', spot5HintStage:0,
+    spot6Stage:'a', spot6BSelected:null, spot6BCorrect:false, spot6BFeedback:'', spot6BHintStage:0,
+    spot7Stage:'math', spot7Input:'', spot7Correct:false, spot7Feedback:'', spot7HintStage:0,
+    activeBlank:null, filledBlanks:{}, fillFeedback:'',
+    guessSelected:null, guessCorrect:false, guessFeedback:''
+  };
+
+  goTo(id){ this.setState({ screen: id }); if (this._scrollEl) this._scrollEl.scrollTop = 0; }
+  scrollRef = (el) => { this._scrollEl = el; };
+
+  startTimer(){
+    if (this._timerId) return;
+    this.setState({ timeLeft: 3300, timerRunning: true });
+    this._timerId = setInterval(() => {
+      this.setState(s => ({ timeLeft: Math.max(0, s.timeLeft - 1) }));
+    }, 1000);
+  }
+  stopTimer(){ if (this._timerId) { clearInterval(this._timerId); this._timerId = null; } }
+  componentWillUnmount(){ this.stopTimer(); }
+
+  renderVals(){
+    const s = this.state;
+    const idx = ORDER.indexOf(s.screen);
+    const selChar = CHARS.find(c => c.id === s.selectedChar) || CHARS[3];
+
+    const charList = CHARS.map(c => ({
+      ...c,
+      borderColor: s.selectedChar === c.id ? '#a12b24' : 'transparent',
+      select: () => this.setState({ selectedChar: c.id }, () => { this.startTimer(); this.goTo('s1intro'); })
+    }));
+
+    const guessOptions = ['① 이육사','② 심훈','③ 윤동주'].map(label => ({
+      label,
+      borderColor: s.guessSelected === label ? (label === '② 심훈' ? '#a12b24' : '#5c4a2e') : 'transparent',
+      select: () => {
+        const correct = label === '② 심훈';
+        this.setState({ guessSelected: label, guessCorrect: correct, guessFeedback: correct ? '정답입니다!' : '다시 생각해보게.' });
+        if (correct) setTimeout(() => this.goTo('endReveal'), 500);
+      }
+    }));
+
+    const filledCount = BLANK_IDS.filter(id => s.filledBlanks[id]).length;
+    const usedTexts = new Set(Object.values(s.filledBlanks));
+    const blanks = {};
+    BLANK_IDS.forEach(id => {
+      const filled = s.filledBlanks[id];
+      blanks[id] = {
+        label: filled || '＿＿＿＿',
+        color: filled ? '#2f6b3a' : (s.activeBlank === id ? '#a12b24' : '#241f18'),
+        weight: filled ? '700' : '400',
+        tap: () => { if (!filled) this.setState({ activeBlank: id, fillFeedback: '' }); }
+      };
+    });
+
+    const pieceBank = PIECES.filter(p => !usedTexts.has(p.text)).map(p => ({
+      ...p,
+      pick: () => {
+        const active = s.activeBlank;
+        if (!active) return;
+        const ok = BLANK_ANSWER[active] === p.text;
+        if (ok) {
+          this.setState(st => ({ filledBlanks: { ...st.filledBlanks, [active]: p.text }, activeBlank: null, fillFeedback: '정답입니다!' }));
+        } else {
+          this.setState({ fillFeedback: '다시 생각해보게.' });
+        }
+      }
+    }));
+
+    return {
+      screen: s.screen,
+      scrollRef: this.scrollRef,
+      isCover: s.screen === 'cover',
+      isSelect: s.screen === 'select',
+      isS1Intro: s.screen === 's1intro', isS1Mission: s.screen === 's1mission', isS1Complete: s.screen === 's1complete',
+      isS2Intro: s.screen === 's2intro', isS2Mission: s.screen === 's2mission', isS2Complete: s.screen === 's2complete',
+      isS3Intro: s.screen === 's3intro', isS3Mission: s.screen === 's3mission', isS3Complete: s.screen === 's3complete',
+      isS4Intro: s.screen === 's4intro', isS4Mission: s.screen === 's4mission', isS4Complete: s.screen === 's4complete',
+      isS5Intro: s.screen === 's5intro', isS5Mission: s.screen === 's5mission', isS5Complete: s.screen === 's5complete',
+      isS6Intro: s.screen === 's6intro', isS6Mission: s.screen === 's6mission', isS6Complete: s.screen === 's6complete',
+      isS7Intro: s.screen === 's7intro', isS7Mission: s.screen === 's7mission', isS7Complete: s.screen === 's7complete',
+      isEndFill: s.screen === 'endFill', isEndGuess: s.screen === 'endGuess', isEndReveal: s.screen === 'endReveal',
+
+      showTopBar: s.screen !== 'cover',
+      showTimer: s.screen !== 'cover' && s.screen !== 'select',
+      stepLabel: STEP_LABELS[s.screen] || '',
+      timeDisplay: `${String(Math.floor(s.timeLeft / 60)).padStart(2,'0')}:${String(s.timeLeft % 60).padStart(2,'0')}`,
+      gaugePct: Math.min(100, (3300 - s.timeLeft) / 3300 * 100),
+      goBack: () => {
+        if (s.screen === 's3mission' && s.spot3Stage === 'b') { this.setState({ spot3Stage: 'a' }); return; }
+        if (s.screen === 's6mission' && s.spot6Stage === 'b') { this.setState({ spot6Stage: 'a' }); return; }
+        const i = ORDER.indexOf(s.screen); if (i > 0) this.goTo(ORDER[i - 1]);
+      },
+      startGame: () => this.goTo('select'),
+      charList,
+      selectedCharObj: selChar,
+      s1IntroLine1: S1_INTRO[selChar.id],
+      s2IntroLine1: S2_INTRO[selChar.id],
+      revealLine: REVEAL[selChar.id],
+
+      togglePieces: () => this.setState({ showPiecesModal: !s.showPiecesModal }),
+      showPiecesModal: s.showPiecesModal,
+      stopPropagation: e => e.stopPropagation(),
+      collectedPieces: PIECES.filter((p,i) => [s.gotP1,s.gotP2,s.gotP3,s.gotP4,s.gotP5,s.gotP6,s.gotP7][i]).map(p => ({symbol:p.symbol, text:`"${p.text}"`})),
+      hasNoPieces: !(s.gotP1||s.gotP2||s.gotP3||s.gotP4||s.gotP5||s.gotP6||s.gotP7),
+
+      restart: () => { this.stopTimer(); this.setState({
+        screen: 'cover', selectedChar: 'kimgu', timeLeft: 3300, timerRunning: false,
+        gotP1:false, gotP2:false, gotP3:false, gotP4:false, gotP5:false, gotP6:false, gotP7:false,
+        showPiecesModal: false,
+        spot1Input:'', spot1Correct:false, spot1Feedback:'', spot1HintStage:0,
+        spot2Stage:'a', spot2Input:'', spot2Correct:false, spot2Feedback:'', spot2HintStage:0,
+        spot3Stage:'a', spot3AInput:'', spot3ACorrect:false, spot3AFeedback:'', spot3AHintStage:0,
+        spot3BSelected:null, spot3BCorrect:false, spot3BFeedback:'', spot3BHintStage:0,
+        spot4Input:'', spot4Correct:false, spot4Feedback:'', spot4HintStage:0,
+        spot5Input:'', spot5Correct:false, spot5Feedback:'', spot5HintStage:0,
+        spot6Stage:'a', spot6BSelected:null, spot6BCorrect:false, spot6BFeedback:'', spot6BHintStage:0,
+        spot7Stage:'math', spot7Input:'', spot7Correct:false, spot7Feedback:'', spot7HintStage:0,
+        activeBlank:null, filledBlanks:{}, fillFeedback:'',
+        guessSelected:null, guessCorrect:false, guessFeedback:''
+      }); },
+
+      // SPOT 1
+      goS1Mission: () => this.goTo('s1mission'),
+      spot1Input: s.spot1Input,
+      setSpot1Input: e => this.setState({ spot1Input: e.target.value }),
+      checkSpot1: () => {
+        const ok = s.spot1Input.trim() === '11';
+        this.setState({ spot1Correct: ok, spot1Feedback: ok ? '정답입니다!' : '다시 생각해보게.' });
+        if (ok) setTimeout(() => { this.setState({ gotP1: true }); this.goTo('s1complete'); }, 500);
+      },
+      spot1Feedback: s.spot1Feedback, spot1FeedbackColor: s.spot1Correct ? '#2f6b3a' : '#a12b24',
+      spot1HintLabel: s.spot1HintStage >= 3 ? '힌트 모두 확인함' : `힌트 보기 (${s.spot1HintStage}/3)`,
+      spot1HintDisabled: s.spot1HintStage >= 3,
+      showHint1: () => this.setState({ spot1HintStage: Math.min(3, s.spot1HintStage + 1) }),
+      spot1HintsVisible: SPOT1_HINTS.slice(0, s.spot1HintStage),
+      goS2Intro: () => this.goTo('s2intro'),
+
+      // SPOT 2
+      isSpot2StageA: s.spot2Stage === 'a', isSpot2StageB: s.spot2Stage === 'b',
+      goSpot2StageB: () => this.setState({ spot2Stage: 'b' }),
+      goS2Mission: () => this.goTo('s2mission'),
+      spot2Input: s.spot2Input,
+      setSpot2Input: e => this.setState({ spot2Input: e.target.value }),
+      checkSpot2: () => {
+        const ok = s.spot2Input.trim() === '신';
+        this.setState({ spot2Correct: ok, spot2Feedback: ok ? '정답입니다!' : '다시 생각해보게.' });
+        if (ok) setTimeout(() => { this.setState({ gotP2: true }); this.goTo('s2complete'); }, 500);
+      },
+      spot2Feedback: s.spot2Feedback, spot2FeedbackColor: s.spot2Correct ? '#2f6b3a' : '#a12b24',
+      spot2HintLabel: s.spot2HintStage >= 3 ? '힌트 모두 확인함' : `힌트 보기 (${s.spot2HintStage}/3)`,
+      spot2HintDisabled: s.spot2HintStage >= 3,
+      showHint2: () => this.setState({ spot2HintStage: Math.min(3, s.spot2HintStage + 1) }),
+      spot2HintsVisible: SPOT2_HINTS.slice(0, s.spot2HintStage),
+      goS3Intro: () => this.goTo('s3intro'),
+
+      // SPOT 3
+      goS3Mission: () => this.goTo('s3mission'),
+      isSpot3StageA: s.spot3Stage === 'a', isSpot3StageB: s.spot3Stage === 'b',
+      spot3AInput: s.spot3AInput,
+      setSpot3AInput: e => this.setState({ spot3AInput: e.target.value }),
+      checkSpot3A: () => {
+        const ok = s.spot3AInput.trim() === '3';
+        this.setState({ spot3ACorrect: ok, spot3AFeedback: ok ? '정답입니다!' : '다시 생각해보게.' });
+        if (ok) setTimeout(() => { this.setState({ spot3Stage: 'b' }); if (this._scrollEl) this._scrollEl.scrollTop = 0; }, 500);
+      },
+      spot3AFeedback: s.spot3AFeedback, spot3AFeedbackColor: s.spot3ACorrect ? '#2f6b3a' : '#a12b24',
+      spot3AHintLabel: s.spot3AHintStage >= 3 ? '힌트 모두 확인함' : `힌트 보기 (${s.spot3AHintStage}/3)`,
+      spot3AHintDisabled: s.spot3AHintStage >= 3,
+      showHint3A: () => this.setState({ spot3AHintStage: Math.min(3, s.spot3AHintStage + 1) }),
+      spot3AHintsVisible: SPOT3A_HINTS.slice(0, s.spot3AHintStage),
+      spot3BOptions: ['박준승(朴準承)','이필주(李弼柱)','정춘수(鄭春洙)','양순백(梁旬伯)'].map((label,i) => ({
+        label,
+        borderColor: s.spot3BSelected === label ? (i === 1 ? '#a12b24' : '#5c4a2e') : 'transparent',
+        select: () => {
+          const ok = i === 1;
+          this.setState({ spot3BSelected: label, spot3BCorrect: ok, spot3BFeedback: ok ? '정답입니다!' : '다시 생각해보게.' });
+          if (ok) setTimeout(() => { this.setState({ gotP3: true }); this.goTo('s3complete'); }, 500);
+        }
+      })),
+      spot3BFeedback: s.spot3BFeedback, spot3BFeedbackColor: s.spot3BCorrect ? '#2f6b3a' : '#a12b24',
+      spot3BHintLabel: s.spot3BHintStage >= 3 ? '힌트 모두 확인함' : `힌트 보기 (${s.spot3BHintStage}/3)`,
+      spot3BHintDisabled: s.spot3BHintStage >= 3,
+      showHint3B: () => this.setState({ spot3BHintStage: Math.min(3, s.spot3BHintStage + 1) }),
+      spot3BHintsVisible: SPOT3B_HINTS.slice(0, s.spot3BHintStage),
+      goS4Intro: () => this.goTo('s4intro'),
+
+      // SPOT 4
+      goS4Mission: () => this.goTo('s4mission'),
+      spot4Input: s.spot4Input,
+      setSpot4Input: e => this.setState({ spot4Input: e.target.value }),
+      checkSpot4: () => {
+        const ok = s.spot4Input.trim() === '815';
+        this.setState({ spot4Correct: ok, spot4Feedback: ok ? '정답입니다!' : '다시 생각해보게.' });
+        if (ok) setTimeout(() => { this.setState({ gotP4: true }); this.goTo('s4complete'); }, 500);
+      },
+      spot4Feedback: s.spot4Feedback, spot4FeedbackColor: s.spot4Correct ? '#2f6b3a' : '#a12b24',
+      spot4HintLabel: s.spot4HintStage >= 3 ? '힌트 모두 확인함' : `힌트 보기 (${s.spot4HintStage}/3)`,
+      spot4HintDisabled: s.spot4HintStage >= 3,
+      showHint4: () => this.setState({ spot4HintStage: Math.min(3, s.spot4HintStage + 1) }),
+      spot4HintsVisible: SPOT4_HINTS.slice(0, s.spot4HintStage),
+      goS5Intro: () => this.goTo('s5intro'),
+
+      // SPOT 5
+      goS5Mission: () => this.goTo('s5mission'),
+      spot5Input: s.spot5Input,
+      setSpot5Input: e => this.setState({ spot5Input: e.target.value }),
+      checkSpot5: () => {
+        const norm = s.spot5Input.replace(/[\s,]+/g,'');
+        const ok = norm === '744';
+        this.setState({ spot5Correct: ok, spot5Feedback: ok ? '정답입니다!' : '다시 생각해보게.' });
+        if (ok) setTimeout(() => { this.setState({ gotP5: true }); this.goTo('s5complete'); }, 500);
+      },
+      spot5Feedback: s.spot5Feedback, spot5FeedbackColor: s.spot5Correct ? '#2f6b3a' : '#a12b24',
+      spot5HintLabel: s.spot5HintStage >= 3 ? '힌트 모두 확인함' : `힌트 보기 (${s.spot5HintStage}/3)`,
+      spot5HintDisabled: s.spot5HintStage >= 3,
+      showHint5: () => this.setState({ spot5HintStage: Math.min(3, s.spot5HintStage + 1) }),
+      spot5HintsVisible: SPOT5_HINTS.slice(0, s.spot5HintStage),
+      goS6Intro: () => this.goTo('s6intro'),
+
+      // SPOT 6
+      goS6Mission: () => this.goTo('s6mission'),
+      isSpot6StageA: s.spot6Stage === 'a', isSpot6StageB: s.spot6Stage === 'b',
+      goSpot6StageB: () => this.setState({ spot6Stage: 'b' }),
+      spot6BOptions: ['①','②','③','④'].map((label,i) => ({
+        label,
+        borderColor: s.spot6BSelected === label ? (i === 1 ? '#a12b24' : '#5c4a2e') : 'transparent',
+        select: () => {
+          const ok = i === 1;
+          this.setState({ spot6BSelected: label, spot6BCorrect: ok, spot6BFeedback: ok ? '정답입니다!' : '다시 생각해보게.' });
+          if (ok) setTimeout(() => { this.setState({ gotP6: true }); this.goTo('s6complete'); }, 500);
+        }
+      })),
+      spot6BFeedback: s.spot6BFeedback, spot6BFeedbackColor: s.spot6BCorrect ? '#2f6b3a' : '#a12b24',
+      spot6BHintLabel: s.spot6BHintStage >= 3 ? '힌트 모두 확인함' : `힌트 보기 (${s.spot6BHintStage}/3)`,
+      spot6BHintDisabled: s.spot6BHintStage >= 3,
+      showHint6B: () => this.setState({ spot6BHintStage: Math.min(3, s.spot6BHintStage + 1) }),
+      spot6BHintsVisible: SPOT6B_HINTS.slice(0, s.spot6BHintStage),
+      goS7Intro: () => this.goTo('s7intro'),
+
+      // SPOT 7
+      goS7Mission: () => this.goTo('s7mission'),
+      isSpot7StageMath: s.spot7Stage === 'math', isSpot7StageStone: s.spot7Stage === 'stone',
+      spot7Input: s.spot7Input,
+      setSpot7Input: e => this.setState({ spot7Input: e.target.value }),
+      checkSpot7: () => {
+        const ok = s.spot7Input.trim() === '9';
+        this.setState({ spot7Correct: ok, spot7Feedback: ok ? '정답입니다!' : '다시 생각해보게.' });
+        if (ok) setTimeout(() => { this.setState({ gotP7: true }); this.goTo('s7complete'); }, 500);
+      },
+      spot7Feedback: s.spot7Feedback, spot7FeedbackColor: s.spot7Correct ? '#2f6b3a' : '#a12b24',
+      spot7HintLabel: s.spot7HintStage >= 3 ? '힌트 모두 확인함' : `힌트 보기 (${s.spot7HintStage}/3)`,
+      spot7HintDisabled: s.spot7HintStage >= 3,
+      showHint7: () => this.setState({ spot7HintStage: Math.min(3, s.spot7HintStage + 1) }),
+      spot7HintsVisible: SPOT7_HINTS.slice(0, s.spot7HintStage),
+      goS7Complete: () => { this.setState({ gotP7: true }); this.goTo('s7complete'); },
+      goEndFill: () => this.goTo('endFill'),
+
+      // ENDING FILL
+      blanks,
+      hasActiveBlank: !!s.activeBlank,
+      pieceBank,
+      fillFeedback: s.fillFeedback,
+      fillFeedbackColor: s.fillFeedback === '정답입니다!' ? '#2f6b3a' : '#a12b24',
+      allBlanksFilled: filledCount === BLANK_IDS.length,
+      goEndGuess: () => this.goTo('endGuess'),
+
+      guessClues: GUESS_CLUES,
+      guessOptions,
+      guessFeedback: s.guessFeedback,
+      guessFeedbackColor: s.guessCorrect ? '#2f6b3a' : '#a12b24',
+      rewards: REWARDS
+    };
+  }
+}
+</script>
+</body>
+</html>
