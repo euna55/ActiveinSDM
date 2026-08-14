@@ -31,7 +31,7 @@
         <div style="writing-mode:vertical-rl;font-size:8px;color:#5c4a2e;letter-spacing:.2em">大韓帝國</div>
         <div style="display:flex;align-items:center;gap:6px;flex:1;justify-content:center">
           <span style="font-size:17px;font-weight:800;color:#241f18;letter-spacing:.08em">독립</span>
-          <image-slot id="masthead-emblem" shape="rect" style="width:24px;height:17px" placeholder="기"></image-slot>
+          <image-slot id="masthead-emblem" shape="rect" style="width:24px;height:17px" placeholder="기" src="images/00.png"></image-slot>
           <span style="font-size:17px;font-weight:800;color:#241f18;letter-spacing:.08em">신문</span>
         </div>
         <div style="writing-mode:vertical-rl;font-size:8px;color:#5c4a2e;letter-spacing:.2em">光復特報</div>
@@ -127,7 +127,7 @@
         <div style="padding:24px 22px 100px">
           <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 1</div>
           <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">독립문</h2>
-          <image-slot id="photo-1" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="독립문 사진"></image-slot>
+          <image-slot id="photo-1" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="독립문 사진" src="images/site01.jpg"></image-slot>
           <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
             <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
             <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18;white-space:pre-line">{{ s1IntroLine1 }}</div>
@@ -156,14 +156,14 @@
             <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">나도 확실치는 않네만, 눈을 크게 뜨고 잘 살펴보게. 가운데도, 네 귀퉁이도 말일세.</div>
           </div>
 
-          <image-slot id="photo-2" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="독립문 태극기 사진"></image-slot>
+          <image-slot id="photo-2" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="독립문 태극기 사진" src="images/02.jpg"></image-slot>
 
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr 1fr;width:230px;height:230px;margin:0 auto 22px;background:#ded0b0;border-radius:8px;padding:14px">
             <div style="display:flex;align-items:center;justify-content:center;font-size:28px;color:#241f18;font-weight:700">7</div>
             <div></div>
             <div style="display:flex;align-items:center;justify-content:center;font-size:28px;color:#241f18;font-weight:700">11</div>
             <div></div>
-            <div style="display:flex;align-items:center;justify-content:center"><image-slot id="masthead-emblem" shape="circle" style="width:72px;height:72px"></image-slot></div>
+            <div style="display:flex;align-items:center;justify-content:center"><image-slot id="masthead-emblem" shape="circle" style="width:72px;height:72px" src="images/00.png"></image-slot></div>
             <div></div>
             <div style="display:flex;align-items:center;justify-content:center;font-size:28px;color:#241f18;font-weight:700">7</div>
             <div></div>
@@ -213,12 +213,12 @@
         <div style="padding:24px 22px 100px">
           <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 2</div>
           <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">서재필 동상</h2>
-          <image-slot id="photo-3" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="서재필 동상 사진"></image-slot>
+          <image-slot id="photo-3" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="서재필 동상 사진" src="images/site02.png"></image-slot>
           <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
             <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
             <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">{{ s2IntroLine1 }}</div>
           </div>
-          <image-slot id="map-1" shape="rounded" style="width: 341px; aspect-ratio: 4/3; margin-bottom: 14px; height: 190px" placeholder="약도 자리"></image-slot>
+          <image-slot id="map-1" shape="rounded" style="width: 341px; aspect-ratio: 4/3; margin-bottom: 14px; height: 190px" placeholder="약도 자리" src="images/map.jpg"></image-slot>
           <button onClick="{{ goS2Mission }}" style="position:sticky;bottom:0;width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px">도착했다</button>
         </div>
       </sc-if>
@@ -232,7 +232,7 @@
           </div>
 
           <sc-if value="{{ isSpot2StageA }}" hint-placeholder-val="{{ true }}">
-            <image-slot id="photo-4" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:16px" placeholder="독립문 현판 사진"></image-slot>
+            <image-slot id="photo-4" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:16px" placeholder="독립문 현판 사진" src="images/01.jpg"></image-slot>
             <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:16px">
               
               
@@ -291,12 +291,12 @@
         <div style="padding:24px 22px 100px">
           <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 3</div>
           <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">3·1독립선언기념탑</h2>
-          <image-slot id="photo-5" shape="rounded" style="width: 326px; aspect-ratio: 4/3; margin-bottom: 18px; height: 254px" placeholder="3·1독립선언기념탑 사진"></image-slot>
+          <image-slot id="photo-5" shape="rounded" style="width: 326px; aspect-ratio: 4/3; margin-bottom: 18px; height: 254px" placeholder="3·1독립선언기념탑 사진" src="images/site04.png"></image-slot>
           <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
             <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
             <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">여러 사람이 함께 만세를 부르는 모습이 새겨진 큰 조각탑을 찾게.</div>
           </div>
-          <image-slot id="map-2" shape="rounded" style="width: 339px; aspect-ratio: 4/3; margin-bottom: 14px; height: 169px" placeholder="약도 자리"></image-slot>
+          <image-slot id="map-2" shape="rounded" style="width: 339px; aspect-ratio: 4/3; margin-bottom: 14px; height: 169px" placeholder="약도 자리" src="images/map.jpg"></image-slot>
           <button onClick="{{ goS3Mission }}" style="position:sticky;bottom:0;width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px">도착했다</button>
         </div>
       </sc-if>
@@ -336,7 +336,7 @@
               <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
               <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">3이라… 저 탑 뒤로 가 보게. 이름이 새겨진 곳 말일세.</div>
             </div>
-            <image-slot id="photo-stele-3" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:14px" placeholder="비석 사진"></image-slot>
+            <image-slot id="photo-stele-3" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:14px" placeholder="비석 사진" src="images/03.jpg"></image-slot>
             
             <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
               <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
@@ -395,12 +395,12 @@
         <div style="padding:24px 22px 100px">
           <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 4</div>
           <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">유관순 열사 동상</h2>
-          <image-slot id="photo-7" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="유관순 열사 동상 사진"></image-slot>
+          <image-slot id="photo-7" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="유관순 열사 동상 사진" src="images/site05.png"></image-slot>
           <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
             <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
             <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">태극기를 높이 든 소녀의 동상이 보이는가? 그 앞으로 가게.</div>
           </div>
-          <image-slot id="map-3" shape="rounded" style="width: 340px; aspect-ratio: 4/3; margin-bottom: 14px; height: 185px" placeholder="약도 자리"></image-slot>
+          <image-slot id="map-3" shape="rounded" style="width: 340px; aspect-ratio: 4/3; margin-bottom: 14px; height: 185px" placeholder="약도 자리" src="images/map.jpg"></image-slot>
           <button onClick="{{ goS4Mission }}" style="position:sticky;bottom:0;width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px">도착했다</button>
         </div>
       </sc-if>
@@ -413,7 +413,7 @@
             <p style="margin: 0; font-family: 'Gaegu',cursive; font-size: 20px; line-height: 1.85; color: #241f18; text-align: center">「이 앞에 새겨진 말 속에<br>셀 수 있는 것들이 숨어 있다.<br><br>하나씩 헤아려 이으면,<br>오래 기다려온 그날이 보이리라.」</p>
           </div>
 
-          <image-slot id="photo-stele-4" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:16px" placeholder="비석 사진"></image-slot>
+          <image-slot id="photo-stele-4" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:16px" placeholder="비석 사진" src="images/04.jpg"></image-slot>
 
           <div style="background:#ded0b0;border-radius:8px;padding:14px 16px;margin-bottom:16px">
             <p style="margin: 0 0 6px; font-size: 15px; color: #241f18">① 첫소리가 'ㅅ'인 글자는 모두 몇 개?</p>
@@ -461,12 +461,12 @@
         <div style="padding:24px 22px 100px">
           <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 5</div>
           <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">순국선열추념탑</h2>
-          <image-slot id="photo-8" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="순국선열추념탑 사진"></image-slot>
+          <image-slot id="photo-8" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="순국선열추념탑 사진" src="images/site06.jpg"></image-slot>
           <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
             <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
             <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">하늘로 길게 솟은 뾰족한 탑이 보이는가? 가장 높은 그 탑으로 가게.</div>
           </div>
-          <image-slot id="map-4" shape="rounded" style="width: 337px; aspect-ratio: 4/3; margin-bottom: 14px; height: 173px" placeholder="약도 자리"></image-slot>
+          <image-slot id="map-4" shape="rounded" style="width: 337px; aspect-ratio: 4/3; margin-bottom: 14px; height: 173px" placeholder="약도 자리" src="images/map.jpg"></image-slot>
           <button onClick="{{ goS5Mission }}" style="position:sticky;bottom:0;width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px">도착했다</button>
         </div>
       </sc-if>
@@ -529,12 +529,12 @@
         <div style="padding:24px 22px 100px">
           <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 6</div>
           <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">경성구치감 발굴지</h2>
-          <image-slot id="photo-9" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="경성구치감 발굴지 사진"></image-slot>
+          <image-slot id="photo-9" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="경성구치감 발굴지 사진" src="images/site07.png"></image-slot>
           <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
             <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
             <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">땅이 파헤쳐지고 벽돌이 쌓인 발굴 현장이 보이는가? 그곳으로 가게.</div>
           </div>
-          <image-slot id="map-5" shape="rounded" style="width: 337px; aspect-ratio: 4/3; margin-bottom: 14px; height: 191px" placeholder="약도 자리"></image-slot>
+          <image-slot id="map-5" shape="rounded" style="width: 337px; aspect-ratio: 4/3; margin-bottom: 14px; height: 191px" placeholder="약도 자리" src="images/map2.jpg"></image-slot>
           <button onClick="{{ goS6Mission }}" style="position:sticky;bottom:0;width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px">도착했다</button>
         </div>
       </sc-if>
@@ -559,7 +559,7 @@
               <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
               <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">이 발굴지 곳곳에 안내판이 여럿 있구먼. 화면에 뜬 그림과 같은 것을 찾아보게.</div>
             </div>
-            <image-slot id="photo-10" shape="rounded" style="width: 327px; aspect-ratio: 4/3; margin-bottom: 16px; height: 368px" placeholder="경성구치감 건축 도면"></image-slot>
+            <image-slot id="photo-10" shape="rounded" style="width: 327px; aspect-ratio: 4/3; margin-bottom: 16px; height: 368px" placeholder="경성구치감 건축 도면" src="images/05.jpg"></image-slot>
             <p style="margin: 0 0 12px; font-size: 18px; color: #5c4a2e; text-align: center">현장의 여러 안내판 중, <br>위 도면과 일치하는 것을 찾았다면</p>
             <button onClick="{{ goSpot6StageB }}" style="width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer">찾았다</button>
           </sc-if>
@@ -569,7 +569,7 @@
               <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
               <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">오, 정말 도면을 찾았구먼! 쪽지에 "내가 걸었던 발걸음을 따라오라"고 했지 않은가. 화살표가 있을 텐데, 그걸 하나씩 따라가 보게.</div>
             </div>
-            <image-slot id="photo-11" shape="rounded" style="width: 328px; aspect-ratio: 4/3; margin-bottom: 16px; height: 326px" placeholder="미로 도식화 그림"></image-slot>
+            <image-slot id="photo-11" shape="rounded" style="width: 328px; aspect-ratio: 4/3; margin-bottom: 16px; height: 326px" placeholder="미로 도식화 그림" src="images/Q1.jpg"></image-slot>
             <div style="background:#ded0b0;border-radius:8px;padding:16px;margin-bottom:14px;text-align:center">
               <div style="font-size:13px;color:#5c4a2e;margin-bottom:8px">시작점 [●]&nbsp; ← ↓ ↓ ← ↑ ↑ ↑ ← ↑</div>
               <div style="font-size:12px;color:#5c4a2e">화살표를 따라가면 도착하는 출구 번호는?</div>
@@ -614,12 +614,12 @@
         <div style="padding:24px 22px 100px">
           <div style="font-size:12.5px;color:#a12b24;letter-spacing:.1em;margin-bottom:4px">스팟 7 · 최종</div>
           <h2 style="margin:0 0 16px;font-size:21px;color:#241f18">서대문형무소역사관 입구</h2>
-          <image-slot id="photo-12" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="서대문형무소역사관 입구 사진"></image-slot>
+          <image-slot id="photo-12" shape="rounded" style="width:100%;aspect-ratio:4/3;margin-bottom:18px" placeholder="서대문형무소역사관 입구 사진" src="images/site08.jpg"></image-slot>
           <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px">
             <img src="{{ selectedCharObj.img }}" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#fff;flex:none">
             <div style="background:#f3ead3;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.7;color:#241f18">드디어 여기까지 왔군. 붉은 벽돌의 이 문이 마지막이라네.</div>
           </div>
-          <image-slot id="map-6" shape="rounded" style="width: 327px; aspect-ratio: 4/3; margin-bottom: 14px; height: 179px" placeholder="약도 자리"></image-slot>
+          <image-slot id="map-6" shape="rounded" style="width: 327px; aspect-ratio: 4/3; margin-bottom: 14px; height: 179px" placeholder="약도 자리" src="images/map2.jpg"></image-slot>
           <button onClick="{{ goS7Mission }}" style="position:sticky;bottom:0;width:100%;background:#a12b24;color:#f3ead3;border:none;padding:15px;border-radius:4px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px">도착했다</button>
         </div>
       </sc-if>
@@ -633,7 +633,7 @@
             <div style="background:#f3ead3;padding:22px 20px;margin:0 auto 22px;transform:rotate(1.3deg);clip-path:polygon(2% 2%,97% 0%,100% 30%,98% 55%,100% 80%,95% 100%,58% 97%,28% 100%,4% 95%,0% 62%,3% 32%,0% 6%);box-shadow:0 6px 16px rgba(36,31,24,.2)">
               <p style="margin: 0; font-family: 'Gaegu',cursive; font-size: 20px; line-height: 1.85; color: #241f18; text-align: center">「이 문의 생김새를 눈으로 그려보라.<br>뾰족한 지붕이 있고, 아치문이 있고,<br>네모난 돌들이 있고, 높은 탑이 있다.<br>다만 그림이 전부는 아니다.<br>그려진 대로 믿지 말고, 실제로 본 것을 떠올려라.」</p>
             </div>
-            <image-slot id="photo-13" shape="rounded" style="width: 325px; aspect-ratio: 4/3; margin-bottom: 16px; height: 352px" placeholder="형무소 입면 그림"></image-slot>
+            <image-slot id="photo-13" shape="rounded" style="width: 325px; aspect-ratio: 4/3; margin-bottom: 16px; height: 352px" placeholder="형무소 입면 그림" src="images/Q2.jpg"></image-slot>
 
             <div style="display:flex;gap:8px;margin-bottom:10px">
               <input value="{{ spot7Input }}" onChange="{{ setSpot7Input }}" placeholder="숫자를 입력하시오" style="flex:1;padding:12px 14px;border:2px solid #241f18;border-radius:4px;font-size:16px;font-family:inherit;background:#fff">
